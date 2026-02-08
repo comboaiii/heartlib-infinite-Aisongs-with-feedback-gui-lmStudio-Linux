@@ -1,7 +1,8 @@
 # AGANCY/lmstudio_controler.py
 import requests
 import json
-from colorama import Fore
+import re
+from colorama import Fore, Style
 
 
 class LMStudioController:
@@ -9,17 +10,15 @@ class LMStudioController:
         self.base_url = base_url.rstrip('/')
 
     def get_active_model(self):
-        """Fetches the exact ID of the currently loaded model."""
+        """Fetches the exact ID of the currently loaded model from LM Studio."""
         try:
             res = requests.get(f"{self.base_url}/models", timeout=2)
             if res.status_code == 200:
                 data = res.json()
-                # LM Studio returns a list of models; usually the loaded one is first
                 if data.get('data') and len(data['data']) > 0:
                     return data['data'][0]['id']
         except:
             pass
-        # Fallback if we can't find it
         return "local-model"
 
     def check_connection(self):
@@ -27,20 +26,50 @@ class LMStudioController:
         try:
             model_id = self.get_active_model()
             res = requests.get(f"{self.base_url}/models", timeout=3)
-
             if res.status_code == 200:
                 return True, f"Connected: {model_id}"
             return False, f"HTTP Error {res.status_code}"
-
         except requests.exceptions.ConnectionError:
-            return False, "Connection Refused (Is LM Studio running?)"
+            return False, "Connection Refused (Is LM Studio Server ON?)"
         except Exception as e:
             return False, str(e)
 
+    def detect_and_clean_reasoning(self, content):
+        """
+        SMART DETECTOR: Removes DeepSeek/R1 <think> blocks and handles
+        <|begin_of_box|> artifacts to ensure only the final lyrics remain.
+        """
+        original_len = len(content)
+
+        # 1. Remove DeepSeek / Chain-of-Thought <think> blocks
+        # re.DOTALL is crucial here to match newlines inside the thought block
+        content = re.sub(r'<think>.*?</think>', '', content, flags=re.DOTALL | re.IGNORECASE)
+        content = re.sub(r'<thought>.*?</thought>', '', content, flags=re.DOTALL | re.IGNORECASE)
+
+        # 2. Handle "Boxed" output (Common in R1 distillations)
+        # If the model wraps the final answer in box tags, we ONLY want what's inside.
+        if "<|begin_of_box|>" in content:
+            # Split and take everything AFTER the begin tag
+            content = content.split("<|begin_of_box|>")[-1]
+
+        if "<|end_of_box|>" in content:
+            # Split and take everything BEFORE the end tag
+            content = content.split("<|end_of_box|>")[0]
+
+        # 3. Clean up Markdown code blocks if the model wrapped lyrics in ```
+        content = content.replace("```json", "").replace("```lyrics", "").replace("```", "")
+
+        content = content.strip()
+
+        if len(content) < original_len:
+            print(f"{Fore.YELLOW}   🧹 Scrubbed {original_len - len(content)} chars of 'Thinking'/'System' tokens.")
+
+        return content
+
     def chat(self, system_prompt, user_content, temp=0.7):
         """
-        Sends a chat request using the correct Model ID.
-        Includes retry logic for common 400 errors.
+        Sends a chat request. Includes reasoning detection and
+        extended timeouts for slow models.
         """
         model_id = self.get_active_model()
 
@@ -52,58 +81,54 @@ class LMStudioController:
             ],
             "temperature": temp,
             "stream": False,
-            "max_tokens": -1  # -1 tells LM Studio to use the context limit
+            "max_tokens": -1
         }
 
         try:
-            # Attempt 1: Use specific Model ID
+            # We set a long timeout (600s) because Reasoning models 'think'
+            # for a long time before sending the first character.
             res = requests.post(
                 f"{self.base_url}/chat/completions",
                 json=payload,
-                timeout=120
+                timeout=600
             )
 
-            # If specific ID fails (400 Bad Request), try generic 'local-model'
+            # Retry with generic ID if specific ID fails
             if res.status_code == 400:
-                print(f"{Fore.YELLOW}⚠️  Specific Model ID failed, retrying with generic 'local-model'...")
+                print(f"{Fore.YELLOW}⚠️  Retrying with generic 'local-model' ID...")
                 payload["model"] = "local-model"
-                res = requests.post(
-                    f"{self.base_url}/chat/completions",
-                    json=payload,
-                    timeout=120
-                )
+                res = requests.post(f"{self.base_url}/chat/completions", json=payload, timeout=600)
 
-            # If it still fails, raise error with the Server's explanation
             if res.status_code != 200:
-                error_msg = f"HTTP {res.status_code}"
-                try:
-                    # Try to parse the server's error message
-                    err_json = res.json()
-                    if 'error' in err_json:
-                        error_msg += f": {err_json['error'].get('message', str(err_json))}"
-                except:
-                    error_msg += f": {res.text}"
-                raise Exception(error_msg)
+                raise Exception(f"LM Studio Error {res.status_code}: {res.text}")
 
-            # Success
             data = res.json()
-            return data['choices'][0]['message']['content'].strip()
+            raw_response = data['choices'][0]['message']['content'].strip()
 
+            # Pass through the Smart Detector
+            processed_response = self.detect_and_clean_reasoning(raw_response)
+
+            return processed_response
+
+        except requests.exceptions.Timeout:
+            print(f"{Fore.RED}❌ ERROR: LLM timed out after 10 minutes.")
+            raise TimeoutError("The model took too long to think. Try a smaller model (Llama-3 8B).")
         except requests.exceptions.ConnectionError:
-            raise ConnectionError("Lost connection to LM Studio during generation.")
+            raise ConnectionError("Lost connection to LM Studio. Ensure the server is RUNNING.")
         except Exception as e:
             print(f"{Fore.RED}LLM Chat Error: {e}")
             raise e
 
     def unload_model(self):
         """
-        Attempts to unload the model to free VRAM.
+        Attempts to unload the model to free VRAM for the Audio Engine.
+        (Requires LM Studio SDK to be installed in the environment)
         """
         try:
             import lmstudio as lms
             lms.llm().unload()
             return True
-        except ImportError:
-            return False
         except:
+            # Fallback: Many setups don't have the SDK, so we just return False
+            # and let the engine handle VRAM clearing via torch.cuda.empty_cache()
             return False

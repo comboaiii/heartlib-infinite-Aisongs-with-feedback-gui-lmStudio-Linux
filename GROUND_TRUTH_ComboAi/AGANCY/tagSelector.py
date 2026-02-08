@@ -54,31 +54,54 @@ class TagSelectorDialog(QDialog):
         try:
             if not conf.TAGS_FILE.exists(): return
             with open(conf.TAGS_FILE, 'r') as f:
-                tags = json.load(f)
+                data = json.load(f)
 
-            tags.sort()
-            row, col = 0, 0
-            for tag in tags:
-                cb = QCheckBox(tag)
-                cb.setObjectName("TagTile")  # Match the CSS badge style
-                cb.setCursor(Qt.CursorShape.PointingHandCursor)
-                cb.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
+            # Check if it's the new Dict structure or old List structure
+            if isinstance(data, list):
+                # Fallback for old style
+                all_tags = sorted(data)
+                self._populate_grid(all_tags, 0)
+            else:
+                # NEW HIERARCHICAL STYLE
+                row_pointer = 0
+                for category, tags in sorted(data.items()):
+                    # Add a Section Header
+                    lbl = QLabel(category)
+                    lbl.setStyleSheet("color: #FF9F1A; font-weight: bold; margin-top: 10px;")
+                    self.grid_layout.addWidget(lbl, row_pointer, 0, 1, 4)  # Span 4 columns
+                    row_pointer += 1
 
-                # Center the text inside the tile
-                cb.setStyleSheet("margin: 0px;")
+                    # Add the tags for this category
+                    row_pointer = self._populate_grid(tags, row_pointer)
 
-                if tag.lower() in self.initially_selected:
-                    cb.setChecked(True)
-
-                self.checkboxes.append(cb)
-                self.grid_layout.addWidget(cb, row, col)
-
-                col += 1
-                if col > 3:  # 4 tiles per row
-                    col = 0
-                    row += 1
         except Exception as e:
             print(f"Error loading tags: {e}")
+
+    def _populate_grid(self, tags, start_row):
+        col = 0
+        row = start_row
+        for tag in tags:
+            cb = QCheckBox(tag)
+            cb.setObjectName("TagTile")
+            cb.setCursor(Qt.CursorShape.PointingHandCursor)
+            cb.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
+
+            # Logic: If checking this, uncheck others in same category?
+            # For now, we trust the user, but visually grouping helps.
+
+            if tag.lower() in self.initially_selected:
+                cb.setChecked(True)
+
+            self.checkboxes.append(cb)
+            self.grid_layout.addWidget(cb, row, col)
+
+            col += 1
+            if col > 3:  # 4 tiles per row
+                col = 0
+                row += 1
+
+        # Return the next available row
+        return row + 1 if col == 0 else row + 1
 
     def filter_tags(self, text):
         text = text.lower()

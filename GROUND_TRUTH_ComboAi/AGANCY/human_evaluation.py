@@ -8,103 +8,160 @@ from PySide6.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout,
                                QHBoxLayout, QListWidget, QListWidgetItem, QPushButton,
                                QTextEdit, QLabel, QScrollArea, QFileDialog, QSlider,
                                QGridLayout, QFrame, QMessageBox, QLineEdit, QSplitter,
-                               QTabWidget, QGroupBox, QDialog)
+                               QProgressBar, QSizePolicy, QAbstractItemView)
 from PySide6.QtMultimedia import QMediaPlayer, QAudioOutput
-from PySide6.QtCore import Qt, QUrl, QTime
-from PySide6.QtGui import QColor, QPainter, QBrush, QAction
+from PySide6.QtCore import Qt, QUrl, QSize, QTimer
+from PySide6.QtGui import QColor, QPainter, QBrush, QAction, QFont, QIcon, QKeySequence, QShortcut
 
-# --- IMPORTS FROM YOUR PROJECT ---
+# --- CONFIG & PATHS ---
 try:
     from tagSelector import TagSelectorDialog
     from orphio_config import conf
-except ImportError:
-    # Fallback if run standalone without config context
-    conf = None
 
-# --- PATH SETUP ---
+    TAGS_FILE = conf.TAGS_FILE
+except ImportError:
+    conf = None
+    TAGS_FILE = Path("tags.json")
+
 SCRIPT_DIR = Path(__file__).parent.absolute()
 DEFAULT_VAULT_PATH = SCRIPT_DIR.parent / "outputSongs_ComboAi"
 if not DEFAULT_VAULT_PATH.exists():
     DEFAULT_VAULT_PATH = SCRIPT_DIR
 
-# --- STYLES ---
-CORE_BLACK = "#0a0a0b"
-PANEL_GRAY = "#161617"
-BORDER_GRAY = "#2a2a2c"
-ACCENT_GREEN = "#00ff7f"
-ACCENT_AMBER = "#FF9F1A"
-TEXT_DIM = "#88888e"
-TEXT_BRIGHT = "#e1e1e6"
+# --- AGENCY STUDIO THEME ---
+COLOR_BG = "#050505"
+COLOR_PANEL = "#09090B"
+COLOR_BORDER = "#27272A"
+COLOR_ACCENT = "#FF9F1A"  # Amber
+COLOR_SUCCESS = "#00FF7F"  # Spring Green
+COLOR_TEXT_MAIN = "#E4E4E7"
+COLOR_TEXT_DIM = "#71717A"
 
-STYLE_SHEET = f"""
-QMainWindow {{ background-color: {CORE_BLACK}; }}
-QFrame#Sidebar {{ background-color: {CORE_BLACK}; border-right: 1px solid {BORDER_GRAY}; }}
-QWidget {{ color: {TEXT_BRIGHT}; font-family: 'Segoe UI', sans-serif; }}
-QGroupBox {{
-    font-weight: bold; border: 1px solid {BORDER_GRAY}; margin-top: 20px; border-radius: 6px;
-}}
-QGroupBox::title {{ subcontrol-origin: margin; left: 10px; padding: 0 5px; }}
-QPushButton#TagBtn {{
-    background-color: {PANEL_GRAY}; border: 1px solid {BORDER_GRAY}; padding: 5px; border-radius: 4px;
-}}
-QPushButton#TagBtn:checked {{
-    background-color: {ACCENT_AMBER}; color: black; border: 1px solid {ACCENT_AMBER};
-}}
-QSlider::groove:horizontal {{ height: 4px; background: {BORDER_GRAY}; }}
-QSlider::handle:horizontal {{ background: {ACCENT_GREEN}; width: 14px; margin: -5px 0; border-radius: 7px; }}
+STYLESHEET = f"""
+    QMainWindow {{ background-color: {COLOR_BG}; color: {COLOR_TEXT_MAIN}; }}
+
+    QFrame#Panel {{ 
+        background-color: {COLOR_PANEL}; 
+        border: 1px solid {COLOR_BORDER}; 
+        border-radius: 6px; 
+    }}
+
+    QLabel {{ color: {COLOR_TEXT_MAIN}; font-family: 'Segoe UI', sans-serif; }}
+    QLabel#Header {{ 
+        color: {COLOR_TEXT_DIM}; font-weight: 800; font-size: 10px; 
+        text-transform: uppercase; letter-spacing: 1px; 
+    }}
+    QLabel#BigTitle {{ font-size: 18px; font-weight: 900; color: white; }}
+
+    /* List Widget */
+    QListWidget {{ 
+        background-color: {COLOR_PANEL}; border: none; outline: none; 
+        font-family: 'Consolas', monospace; font-size: 13px;
+    }}
+    QListWidget::item {{ padding: 8px; color: {COLOR_TEXT_DIM}; border-bottom: 1px solid #121212; }}
+    QListWidget::item:selected {{ 
+        background-color: #18181B; color: {COLOR_ACCENT}; 
+        border-left: 2px solid {COLOR_ACCENT}; 
+    }}
+
+    /* Sliders */
+    QSlider::groove:horizontal {{ height: 4px; background: {COLOR_BORDER}; border-radius: 2px; }}
+    QSlider::handle:horizontal {{ 
+        background: {COLOR_TEXT_MAIN}; width: 14px; margin: -5px 0; border-radius: 7px; 
+    }}
+    QSlider::handle:horizontal:hover {{ background: {COLOR_ACCENT}; }}
+
+    /* Buttons */
+    QPushButton {{
+        background-color: #18181B; border: 1px solid {COLOR_BORDER};
+        color: {COLOR_TEXT_MAIN}; padding: 8px; border-radius: 4px; font-weight: bold;
+    }}
+    QPushButton:hover {{ border-color: {COLOR_TEXT_MAIN}; background-color: #27272A; }}
+    QPushButton#PrimaryBtn {{ 
+        background-color: {COLOR_ACCENT}; color: black; border: none; font-weight: 900; 
+    }}
+    QPushButton#PrimaryBtn:hover {{ background-color: #FFB020; }}
+
+    QPushButton#TechBtn {{ 
+        background-color: #121212; color: #555; border: 1px solid #222; font-size: 11px;
+    }}
+    QPushButton#TechBtn:checked {{ 
+        background-color: #1A2218; color: {COLOR_SUCCESS}; border: 1px solid {COLOR_SUCCESS}; 
+    }}
+
+    /* Scroll Area */
+    QScrollArea {{ border: none; background: transparent; }}
+    QScrollBar:vertical {{ background: {COLOR_BG}; width: 8px; }}
+    QScrollBar::handle:vertical {{ background: #333; border-radius: 4px; }}
 """
 
-# Technical Audit Categories (Kept from your original)
-TECHNICAL_SCHEMA = {
-    "MIXING": ["Clear", "Muddy", "Wide", "Mono", "Loud", "Quiet"],
-    "VOCALS": ["Clear", "Buried", "Robotic", "Natural", "Glitchy"],
-    "STRUCTURE": ["Coherent", "Abrupt End", "Looping", "Evolving"]
-}
 
+# --- LOGIC & WIDGETS ---
 
-class AdherenceSlider(QWidget):
-    """Widget to judge how well a specific tag was adhered to."""
+class AdherenceRow(QWidget):
+    """A single row to judge one tag: Label | Slider | Score"""
 
-    def __init__(self, tag_name, score=0):
+    def __init__(self, tag_name, score=5):
         super().__init__()
         self.tag_name = tag_name
+        self.setFixedHeight(40)
+
         layout = QHBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
 
-        self.lbl = QLabel(f"{tag_name.upper()}")
-        self.lbl.setFixedWidth(120)
-        self.lbl.setStyleSheet(f"font-weight:bold; color: {TEXT_DIM};")
+        # Label
+        self.lbl = QLabel(tag_name.upper())
+        self.lbl.setFixedWidth(140)
+        self.lbl.setStyleSheet(f"font-weight:bold; color: {COLOR_TEXT_DIM};")
 
+        # Slider
         self.slider = QSlider(Qt.Horizontal)
-        self.slider.setRange(0, 10)  # 0 to 10 score
+        self.slider.setRange(0, 10)
         self.slider.setValue(score)
 
+        # Score Display
         self.score_lbl = QLabel(str(score))
         self.score_lbl.setFixedWidth(30)
-        self.score_lbl.setStyleSheet(f"color: {ACCENT_GREEN}; font-weight:bold;")
+        self.score_lbl.setAlignment(Qt.AlignCenter)
+        self.score_lbl.setStyleSheet("font-weight:bold; background: #111; border-radius: 3px;")
 
-        self.slider.valueChanged.connect(lambda v: self.score_lbl.setText(str(v)))
+        self.slider.valueChanged.connect(self.update_visuals)
+        self.update_visuals(score)  # Init color
 
         layout.addWidget(self.lbl)
         layout.addWidget(self.slider)
         layout.addWidget(self.score_lbl)
 
+    def update_visuals(self, val):
+        self.score_lbl.setText(str(val))
+        # Color scale: Red (0) -> Yellow (5) -> Green (10)
+        if val < 4:
+            color = "#FF4444"
+        elif val < 8:
+            color = "#FF9F1A"
+        else:
+            color = "#00FF7F"
+        self.score_lbl.setStyleSheet(f"color: {color}; font-weight:bold; background: #111; border-radius: 3px;")
+
     def get_score(self):
         return self.slider.value()
 
 
-class WaveformDisplay(QWidget):
+class LiveWaveform(QWidget):
+    """Visualizes audio playback"""
+
     def __init__(self, player):
         super().__init__()
         self.player = player
-        self.setFixedHeight(80)
+        self.setFixedHeight(60)
         self.bars = []
         self.pos_ratio = 0
-        self.setStyleSheet(f"background: {PANEL_GRAY}; border-radius: 6px;")
+        self.setStyleSheet(f"background: {COLOR_PANEL}; border-radius: 4px; border: 1px solid {COLOR_BORDER};")
 
-    def set_seed(self, seed_val):
+    def generate_bars(self, seed_val):
         random.seed(seed_val)
-        self.bars = [random.uniform(0.2, 0.9) for _ in range(100)]
+        # Generate symmetrical-ish bars for a "waveform" look
+        self.bars = [random.uniform(0.1, 0.9) for _ in range(80)]
         self.update()
 
     def paintEvent(self, event):
@@ -112,20 +169,20 @@ class WaveformDisplay(QWidget):
         painter.setRenderHint(QPainter.Antialiasing)
         w, h = self.width(), self.height()
 
-        # Draw Bars
         if not self.bars: return
+
         bar_w = w / len(self.bars)
 
         for i, val in enumerate(self.bars):
-            bar_h = val * h * 0.8
+            bar_h = val * (h - 10)
             x = i * bar_w
             y = (h - bar_h) / 2
 
-            # Color logic based on playhead
+            # Active color vs Inactive color
             if (i / len(self.bars)) < self.pos_ratio:
-                painter.setBrush(QBrush(QColor(ACCENT_GREEN)))
+                painter.setBrush(QBrush(QColor(COLOR_ACCENT)))
             else:
-                painter.setBrush(QBrush(QColor("#333")))
+                painter.setBrush(QBrush(QColor("#222")))
 
             painter.setPen(Qt.NoPen)
             painter.drawRoundedRect(int(x), int(y), int(bar_w - 1), int(bar_h), 2, 2)
@@ -137,161 +194,197 @@ class WaveformDisplay(QWidget):
             self.player.setPosition(pos)
 
 
-class OrphioAuditorPro(QMainWindow):
+class OrphioAuditor(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("ORPHIO EVALUATOR PRO - Adherence & Feedback")
-        self.resize(1400, 900)
-        self.setStyleSheet(STYLE_SHEET)
+        self.setWindowTitle("ORPHIO AGENCY EVALUATOR")
+        self.resize(1400, 850)
+        self.setStyleSheet(STYLESHEET)
 
         self.vault_path = DEFAULT_VAULT_PATH
         self.current_json_path = None
-        self.adherence_widgets = []  # Stores slider widgets
-        self.feedback_tags = []  # Stores strings of added tags
-        self.tech_btns = {}  # Stores technical buttons
+        self.adherence_widgets = []
+        self.feedback_tags = []
+        self.tech_btns = {}
 
-        # Audio
+        # Audio Setup
         self.player = QMediaPlayer()
         self.audio_out = QAudioOutput()
+        self.audio_out.setVolume(1.0)
         self.player.setAudioOutput(self.audio_out)
         self.player.positionChanged.connect(self.on_position_changed)
-        self.player.durationChanged.connect(self.on_duration_changed)
+        self.player.playbackStateChanged.connect(self.on_state_changed)
+
+        # Shortcuts
+        self.space_shortcut = QShortcut(QKeySequence(Qt.Key_Space), self)
+        self.space_shortcut.activated.connect(self.toggle_play)
 
         self.init_ui()
         self.scan_vault()
 
     def init_ui(self):
-        main_widget = QWidget()
-        self.setCentralWidget(main_widget)
-        main_layout = QHBoxLayout(main_widget)
+        main = QWidget()
+        self.setCentralWidget(main)
+        main_layout = QHBoxLayout(main)
+        main_layout.setContentsMargins(0, 0, 0, 0)
+        main_layout.setSpacing(0)
 
         splitter = QSplitter(Qt.Horizontal)
+        splitter.setHandleWidth(1)
 
-        # --- LEFT: FILE LIST ---
+        # === LEFT: FILE BROWSER ===
         sidebar = QFrame()
-        sidebar.setObjectName("Sidebar")
-        sidebar.setFixedWidth(300)
+        sidebar.setObjectName("Panel")
+        sidebar.setFixedWidth(320)
         sb_layout = QVBoxLayout(sidebar)
-
-        self.btn_load = QPushButton("📁 OPEN VAULT")
-        self.btn_load.clicked.connect(self.open_vault)
-        self.file_list = QListWidget()
-        self.file_list.itemClicked.connect(self.load_song)
-        self.lbl_stats = QLabel("0 / 0 Evaluated")
-
-        sb_layout.addWidget(self.btn_load)
-        sb_layout.addWidget(self.file_list)
-        sb_layout.addWidget(self.lbl_stats)
-
-        # --- RIGHT: WORKSPACE ---
-        workspace = QWidget()
-        ws_layout = QVBoxLayout(workspace)
+        sb_layout.setContentsMargins(10, 10, 10, 10)
 
         # Header
-        self.lbl_title = QLabel("SELECT A TRACK")
-        self.lbl_title.setStyleSheet("font-size: 22px; font-weight: 900; color: white;")
-        ws_layout.addWidget(self.lbl_title)
+        sb_layout.addWidget(QLabel("SOURCE VAULT", objectName="Header"))
+        self.btn_load = QPushButton(f"📂 {self.vault_path.name}")
+        self.btn_load.clicked.connect(self.open_vault)
+        sb_layout.addWidget(self.btn_load)
 
-        # Audio Controls
-        self.wave_view = WaveformDisplay(self.player)
-        ws_layout.addWidget(self.wave_view)
+        # List
+        self.file_list = QListWidget()
+        self.file_list.setSelectionMode(QAbstractItemView.SingleSelection)
+        self.file_list.itemClicked.connect(self.load_song)
+        sb_layout.addWidget(self.file_list)
 
-        ctrl_layout = QHBoxLayout()
-        self.btn_play = QPushButton("▶ PLAY")
-        self.btn_play.setFixedSize(100, 40)
-        self.btn_play.setStyleSheet(f"background: {ACCENT_GREEN}; color: black; font-weight: bold;")
+        # Stats
+        self.lbl_stats = QLabel("0/0 VALIDATED")
+        self.lbl_stats.setStyleSheet(f"color:{COLOR_TEXT_DIM}; font-size:11px; font-weight:bold;")
+        sb_layout.addWidget(self.lbl_stats, alignment=Qt.AlignCenter)
+
+        # === RIGHT: WORKSPACE ===
+        workspace = QWidget()
+        ws_layout = QVBoxLayout(workspace)
+        ws_layout.setContentsMargins(20, 20, 20, 20)
+
+        # 1. TOP BAR (Title + Playback)
+        top_bar = QFrame()
+        top_bar.setFixedHeight(80)
+        top_lyt = QHBoxLayout(top_bar)
+        top_lyt.setContentsMargins(0, 0, 0, 0)
+
+        self.btn_play = QPushButton("▶")
+        self.btn_play.setFixedSize(50, 50)
+        self.btn_play.setObjectName("PrimaryBtn")
+        self.btn_play.setStyleSheet(f"font-size: 20px; border-radius: 25px;")
         self.btn_play.clicked.connect(self.toggle_play)
-        self.lbl_time = QLabel("00:00 / 00:00")
-        ctrl_layout.addWidget(self.btn_play)
-        ctrl_layout.addWidget(self.lbl_time)
-        ctrl_layout.addStretch()
-        ws_layout.addLayout(ctrl_layout)
 
-        # --- EVALUATION ZONES (Split Vertical) ---
-        eval_splitter = QSplitter(Qt.Vertical)
+        info_lyt = QVBoxLayout()
+        self.lbl_title = QLabel("NO TRACK SELECTED")
+        self.lbl_title.setObjectName("BigTitle")
+        self.lbl_sub = QLabel("Select a file to begin evaluation")
+        self.lbl_sub.setStyleSheet(f"color: {COLOR_ACCENT}; font-family: monospace;")
+        info_lyt.addWidget(self.lbl_title)
+        info_lyt.addWidget(self.lbl_sub)
 
-        # ZONE 1: ADHERENCE (Did we get what we asked for?)
-        zone_adherence = QFrame()
-        za_layout = QVBoxLayout(zone_adherence)
-        za_layout.addWidget(
-            QLabel("1. PROMPT ADHERENCE JUDGMENT", styleSheet=f"color:{ACCENT_AMBER}; font-weight:900;"))
+        self.wave_view = LiveWaveform(self.player)
+        self.wave_view.setFixedWidth(400)
 
-        self.scroll_adherence = QScrollArea()
-        self.scroll_adherence.setWidgetResizable(True)
-        self.cont_adherence = QWidget()
-        self.lyt_adherence = QVBoxLayout(self.cont_adherence)  # Will be populated dynamically
-        self.scroll_adherence.setWidget(self.cont_adherence)
-        za_layout.addWidget(self.scroll_adherence)
+        top_lyt.addWidget(self.btn_play)
+        top_lyt.addLayout(info_lyt)
+        top_lyt.addStretch()
+        top_lyt.addWidget(self.wave_view)
 
-        # ZONE 2: FEEDBACK & DISCOVERY (What is it actually?)
-        zone_feedback = QFrame()
-        zf_layout = QVBoxLayout(zone_feedback)
+        ws_layout.addWidget(top_bar)
 
-        # Top half of Zone 2: Tag List
-        h_tag_head = QHBoxLayout()
-        h_tag_head.addWidget(
-            QLabel("2. PERCEIVED TAGS (FEEDBACK)", styleSheet=f"color:{ACCENT_AMBER}; font-weight:900;"))
-        btn_add_tag = QPushButton("+ ADD TAGS")
-        btn_add_tag.setFixedSize(100, 25)
-        btn_add_tag.setStyleSheet(f"background: {PANEL_GRAY}; border: 1px solid {ACCENT_AMBER}; color: {ACCENT_AMBER};")
-        btn_add_tag.clicked.connect(self.open_tag_selector)
-        h_tag_head.addWidget(btn_add_tag)
-        zf_layout.addLayout(h_tag_head)
+        # 2. EVALUATION AREA (Scrollable)
+        scroll = QScrollArea()
+        scroll.setWidgetResizable(True)
+        eval_widget = QWidget()
+        eval_lyt = QVBoxLayout(eval_widget)
 
-        self.txt_feedback_tags = QTextEdit()
-        self.txt_feedback_tags.setPlaceholderText("Tags will appear here (e.g. 'Slow, Dark, Piano')...")
-        self.txt_feedback_tags.setFixedHeight(60)
-        self.txt_feedback_tags.setReadOnly(True)  # Read only because we use the dialog
-        zf_layout.addWidget(self.txt_feedback_tags)
+        # SECTION A: PROMPT ADHERENCE
+        eval_lyt.addWidget(QLabel("1. PROMPT ADHERENCE (Did it listen?)", objectName="Header"))
+        self.adherence_container = QFrame()
+        self.adherence_container.setObjectName("Panel")
+        self.adh_layout = QVBoxLayout(self.adherence_container)
+        eval_lyt.addWidget(self.adherence_container)
 
-        # Bottom half of Zone 2: Technical Checkboxes
-        zf_layout.addWidget(
-            QLabel("3. TECHNICAL AUDIT", styleSheet=f"color:{ACCENT_AMBER}; font-weight:900; margin-top:10px;"))
-        self.tech_grid = QGridLayout()
-        row = 0
-        for cat, opts in TECHNICAL_SCHEMA.items():
-            self.tech_grid.addWidget(QLabel(cat, styleSheet="color:#555; font-weight:bold;"), row, 0)
-            col = 1
+        # SECTION B: DISCOVERY (What is it?)
+        eval_lyt.addSpacing(10)
+        disc_head = QHBoxLayout()
+        disc_head.addWidget(QLabel("2. PERCEIVED ATTRIBUTES (What do you hear?)", objectName="Header"))
+        btn_tags = QPushButton("+ TAGS")
+        btn_tags.setFixedSize(80, 20)
+        btn_tags.setStyleSheet(
+            f"background: transparent; border: 1px solid {COLOR_ACCENT}; color: {COLOR_ACCENT}; font-size: 10px;")
+        btn_tags.clicked.connect(self.open_tag_selector)
+        disc_head.addWidget(btn_tags)
+        disc_head.addStretch()
+        eval_lyt.addLayout(disc_head)
+
+        self.txt_feedback = QTextEdit()
+        self.txt_feedback.setFixedHeight(60)
+        self.txt_feedback.setReadOnly(True)
+        self.txt_feedback.setStyleSheet(
+            f"background: #000; border: 1px solid {COLOR_BORDER}; color: {COLOR_ACCENT}; padding: 10px;")
+        eval_lyt.addWidget(self.txt_feedback)
+
+        # SECTION C: TECH AUDIT
+        eval_lyt.addSpacing(10)
+        eval_lyt.addWidget(QLabel("3. TECHNICAL MATRIX", objectName="Header"))
+
+        tech_frame = QFrame()
+        tech_frame.setObjectName("Panel")
+        tech_grid = QGridLayout(tech_frame)
+        tech_grid.setSpacing(5)
+
+        audit_schema = {
+            "MIX": ["Muddy", "Quiet", "Clipping", "Wide", "Punchy"],
+            "VOCAL": ["Robotic", "Buried", "Clear", "Slurring", "Angelic"],
+            "ARRANGEMENT": ["Repetitive", "Abrupt End", "Coherent", "Complex"]
+        }
+
+        r = 0
+        for cat, opts in audit_schema.items():
+            tech_grid.addWidget(QLabel(cat, styleSheet="font-weight:bold; color:#555;"), r, 0)
+            c = 1
             self.tech_btns[cat] = []
             for opt in opts:
                 btn = QPushButton(opt)
                 btn.setCheckable(True)
-                btn.setObjectName("TagBtn")
+                btn.setObjectName("TechBtn")
                 btn.setFixedHeight(25)
-                self.tech_grid.addWidget(btn, row, col)
                 self.tech_btns[cat].append(btn)
-                col += 1
-                if col > 5:
-                    col = 1;
-                    row += 1
-            row += 1
+                tech_grid.addWidget(btn, r, c)
+                c += 1
+            r += 1
 
-        tech_widget = QWidget()
-        tech_widget.setLayout(self.tech_grid)
-        zf_layout.addWidget(tech_widget)
+        eval_lyt.addWidget(tech_frame)
+        eval_lyt.addStretch()
+        scroll.setWidget(eval_widget)
+        ws_layout.addWidget(scroll)
 
-        # Add zones to splitter
-        eval_splitter.addWidget(zone_adherence)
-        eval_splitter.addWidget(zone_feedback)
-        ws_layout.addWidget(eval_splitter)
-
-        # --- FOOTER: COMMIT ---
+        # 3. FOOTER (COMMIT)
         footer = QFrame()
-        f_layout = QHBoxLayout(footer)
-        self.lbl_overall = QLabel("OVERALL SCORE: 5")
+        footer.setObjectName("Panel")
+        footer.setFixedHeight(70)
+        foot_lyt = QHBoxLayout(footer)
+
         self.slider_overall = QSlider(Qt.Horizontal)
         self.slider_overall.setRange(1, 10)
         self.slider_overall.setValue(5)
-        self.slider_overall.valueChanged.connect(lambda v: self.lbl_overall.setText(f"OVERALL SCORE: {v}"))
+        self.slider_overall.setFixedWidth(200)
 
-        self.btn_commit = QPushButton("✅ SAVE EVALUATION")
-        self.btn_commit.setFixedSize(150, 40)
-        self.btn_commit.setStyleSheet(f"background: {TEXT_BRIGHT}; color: black; font-weight: 900;")
-        self.btn_commit.clicked.connect(self.save_evaluation)
+        self.lbl_overall = QLabel("OVERALL: 5/10")
+        self.lbl_overall.setStyleSheet(f"color: {COLOR_ACCENT}; font-weight: 900; font-size: 14px;")
+        self.slider_overall.valueChanged.connect(lambda v: self.lbl_overall.setText(f"OVERALL: {v}/10"))
 
-        f_layout.addWidget(self.lbl_overall)
-        f_layout.addWidget(self.slider_overall)
-        f_layout.addWidget(self.btn_commit)
+        self.btn_save = QPushButton("✅ MARK AS VALIDATED")
+        self.btn_save.setObjectName("PrimaryBtn")
+        self.btn_save.setFixedSize(200, 40)
+        self.btn_save.clicked.connect(self.save_evaluation)
+
+        foot_lyt.addWidget(QLabel("FINAL VERDICT:", styleSheet="font-weight:bold;"))
+        foot_lyt.addWidget(self.slider_overall)
+        foot_lyt.addWidget(self.lbl_overall)
+        foot_lyt.addStretch()
+        foot_lyt.addWidget(self.btn_save)
+
         ws_layout.addWidget(footer)
 
         splitter.addWidget(sidebar)
@@ -304,136 +397,110 @@ class OrphioAuditorPro(QMainWindow):
         self.file_list.clear()
         if not self.vault_path.exists(): return
 
+        # Get all JSONs
         files = sorted(list(self.vault_path.glob("*.json")), key=lambda f: f.stat().st_mtime, reverse=True)
-        evaluated_count = 0
 
+        evaluated_cnt = 0
         for f in files:
             try:
                 with open(f, 'r', encoding='utf-8') as jf:
                     data = json.load(jf)
 
                 status = data.get('human_evaluation', {}).get('status', 'PENDING')
-                title = data.get('provenance', {}).get('title', f.stem)
+                prov_id = data.get('provenance', {}).get('id', f.stem)
 
-                icon = "🟢" if status == "VALIDATED" else "⚪"
-                if status == "VALIDATED": evaluated_count += 1
+                # Visual Indicator
+                if status == "VALIDATED":
+                    icon = "🟢"
+                    evaluated_cnt += 1
+                    color = COLOR_SUCCESS
+                else:
+                    icon = "⚪"
+                    color = COLOR_TEXT_DIM
 
-                item = QListWidgetItem(f"{icon} {title}")
+                display_text = f"{icon}  {prov_id}"
+                item = QListWidgetItem(display_text)
                 item.setData(Qt.UserRole, str(f))
+                item.setForeground(QColor(color))
                 self.file_list.addItem(item)
-            except:
-                pass
 
-        self.lbl_stats.setText(f"{evaluated_count} / {len(files)} Evaluated")
+            except Exception as e:
+                print(f"Error reading {f.name}: {e}")
+
+        self.lbl_stats.setText(f"{evaluated_cnt} / {len(files)} VALIDATED")
+        self.btn_load.setText(f"📂 {self.vault_path.name}")
 
     def load_song(self, item):
         json_path = Path(item.data(Qt.UserRole))
         self.current_json_path = json_path
         wav_path = json_path.with_suffix(".wav")
 
-        # Reset UI
-        for i in reversed(range(self.lyt_adherence.count())):
-            self.lyt_adherence.itemAt(i).widget().setParent(None)
+        # Clear UI
+        self.player.stop()
+        for i in reversed(range(self.adh_layout.count())):
+            self.adh_layout.itemAt(i).widget().setParent(None)
         self.adherence_widgets.clear()
-        self.feedback_tags = []
-        self.txt_feedback_tags.clear()
 
         # Load Data
         with open(json_path, 'r', encoding='utf-8') as f:
             data = json.load(f)
 
-        # 1. Setup Audio
+        config = data.get('configuration', {})
+        prompt = config.get('input_prompt', {})
+        eval_data = data.get('human_evaluation', {})
+
+        # Header Info
+        self.lbl_title.setText(data.get('provenance', {}).get('id', "Unknown"))
+        seed = config.get('seed', 0)
+        self.lbl_sub.setText(f"Seed: {seed} | CFG: {config.get('cfg_scale')} | Time: {config.get('duration_sec')}s")
+
+        # Waveform Seed
+        self.wave_view.generate_bars(seed)
+
+        # 1. Load Audio
         if wav_path.exists():
             self.player.setSource(QUrl.fromLocalFile(str(wav_path)))
-            self.lbl_title.setText(data.get('provenance', {}).get('title', wav_path.stem))
-            seed = data.get('configuration', {}).get('seed', 0)
-            self.wave_view.set_seed(seed)
         else:
-            self.lbl_title.setText("AUDIO FILE MISSING")
+            self.lbl_title.setText("⚠️ AUDIO MISSING")
 
-        # 2. Populate Adherence (Judgment)
-        prompt_tags = data.get('configuration', {}).get('input_prompt', {}).get('tags', [])
-        # Check if we already have scores
-        saved_adh = data.get('human_evaluation', {}).get('prompt_adherence_scores', {})
+        # 2. Populate Adherence
+        target_tags = prompt.get('tags', [])
+        saved_adh = eval_data.get('prompt_adherence_scores', {})
 
-        for tag in prompt_tags:
-            # Default score 5 if not evaluated, or load saved score
+        if not target_tags:
+            self.adh_layout.addWidget(QLabel("No target tags found in metadata."))
+
+        for tag in target_tags:
             score = saved_adh.get(tag, 5)
-            widget = AdherenceSlider(tag, score)
-            self.lyt_adherence.addWidget(widget)
-            self.adherence_widgets.append(widget)
+            row = AdherenceRow(tag, score)
+            self.adh_layout.addWidget(row)
+            self.adherence_widgets.append(row)
 
-        # 3. Populate Feedback (Discovery)
-        saved_perceived = data.get('human_evaluation', {}).get('perceived_tags', [])
-        self.feedback_tags = saved_perceived
-        self.txt_feedback_tags.setText(", ".join(self.feedback_tags))
+        # 3. Populate Feedback
+        self.feedback_tags = eval_data.get('perceived_tags', [])
+        self.txt_feedback.setText(", ".join(self.feedback_tags))
 
-        # 4. Populate Technical & Overall
-        saved_eval = data.get('human_evaluation', {})
-        self.slider_overall.setValue(saved_eval.get('overall_score', 5))
-
-        saved_tech = saved_eval.get('technical_audit_scores', {})
+        # 4. Tech Audit
+        saved_tech = eval_data.get('technical_audit_scores', {})
         for cat, btns in self.tech_btns.items():
             for btn in btns:
-                # Check based on text
                 val = saved_tech.get(btn.text(), 0)
                 btn.setChecked(val == 1)
 
-    def open_tag_selector(self):
-        """Opens the Dialog to select feedback tags from tags.json"""
-        current_str = ", ".join(self.feedback_tags)
+        # 5. Overall
+        self.slider_overall.setValue(eval_data.get('overall_score', 5))
 
-        # Use the class from tagSelector.py
-        dlg = TagSelectorDialog(current_str, self)
-        if dlg.exec():
-            # Get list of strings
-            new_tags = dlg.get_selected_tags()
-            self.feedback_tags = new_tags
-            self.txt_feedback_tags.setText(", ".join(new_tags))
-
-    def save_evaluation(self):
-        if not self.current_json_path: return
-
-        with open(self.current_json_path, 'r', encoding='utf-8') as f:
-            data = json.load(f)
-
-        # 1. Gather Adherence Scores
-        adh_scores = {w.tag_name: w.get_score() for w in self.adherence_widgets}
-
-        # 2. Gather Technical Scores
-        tech_scores = {}
-        for cat, btns in self.tech_btns.items():
-            for btn in btns:
-                if btn.isChecked():
-                    tech_scores[btn.text()] = 1
-
-        # 3. Update JSON Structure
-        data['human_evaluation'] = {
-            "status": "VALIDATED",
-            "overall_score": self.slider_overall.value(),
-            "timestamp": datetime.now().isoformat(),
-
-            # THE TWO NEW WAYS YOU REQUESTED:
-            "prompt_adherence_scores": adh_scores,  # Judgement
-            "perceived_tags": self.feedback_tags,  # Feedback/Discovery
-
-            "technical_audit_scores": tech_scores
-        }
-
-        with open(self.current_json_path, 'w', encoding='utf-8') as f:
-            json.dump(data, f, indent=4)
-
-        self.scan_vault()
-        QMessageBox.information(self, "Success", "Evaluation Saved!")
-
-    # --- AUDIO HELPERS ---
     def toggle_play(self):
         if self.player.playbackState() == QMediaPlayer.PlayingState:
-            self.player.pause();
-            self.btn_play.setText("▶")
+            self.player.pause()
         else:
-            self.player.play();
-            self.btn_play.setText("⏸")
+            if self.player.mediaStatus() == QMediaPlayer.NoMedia and self.current_json_path:
+                # Reload if needed
+                self.load_song(self.file_list.currentItem())
+            self.player.play()
+
+    def on_state_changed(self, state):
+        self.btn_play.setText("⏸" if state == QMediaPlayer.PlayingState else "▶")
 
     def on_position_changed(self, pos):
         dur = self.player.duration()
@@ -441,24 +508,61 @@ class OrphioAuditorPro(QMainWindow):
             self.wave_view.pos_ratio = pos / dur
             self.wave_view.update()
 
-            cur_min = (pos // 1000) // 60
-            cur_sec = (pos // 1000) % 60
-            tot_min = (dur // 1000) // 60
-            tot_sec = (dur // 1000) % 60
-            self.lbl_time.setText(f"{cur_min:02}:{cur_sec:02} / {tot_min:02}:{tot_sec:02}")
+    def open_tag_selector(self):
+        """Uses the shared Agency Tag Selector"""
+        dlg = TagSelectorDialog(", ".join(self.feedback_tags), self)
+        if dlg.exec():
+            self.feedback_tags = dlg.get_selected_tags()
+            self.txt_feedback.setText(", ".join(self.feedback_tags))
 
-    def on_duration_changed(self, dur):
-        pass
+    def save_evaluation(self):
+        if not self.current_json_path: return
+
+        # 1. Collect Data
+        adh_scores = {w.tag_name: w.get_score() for w in self.adherence_widgets}
+        tech_scores = {}
+        for cat, btns in self.tech_btns.items():
+            for btn in btns:
+                if btn.isChecked(): tech_scores[btn.text()] = 1
+
+        # 2. Load & Update JSON
+        try:
+            with open(self.current_json_path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+
+            data['human_evaluation'] = {
+                "status": "VALIDATED",
+                "timestamp": datetime.now().isoformat(),
+                "overall_score": self.slider_overall.value(),
+                "prompt_adherence_scores": adh_scores,
+                "perceived_tags": self.feedback_tags,
+                "technical_audit_scores": tech_scores
+            }
+
+            with open(self.current_json_path, 'w', encoding='utf-8') as f:
+                json.dump(data, f, indent=4)
+
+            # 3. Update UI
+            curr_item = self.file_list.currentItem()
+            curr_item.setText(f"🟢  {data['provenance']['id']}")
+            curr_item.setForeground(QColor(COLOR_SUCCESS))
+
+            # Feedback
+            QMessageBox.information(self, "Saved", "Evaluation committed to vault.")
+
+        except Exception as e:
+            QMessageBox.critical(self, "Error", f"Could not save JSON: {e}")
 
     def open_vault(self):
-        path = QFileDialog.getExistingDirectory(self, "Select Vault", str(self.vault_path))
-        if path:
-            self.vault_path = Path(path)
+        d = QFileDialog.getExistingDirectory(self, "Open Vault", str(self.vault_path))
+        if d:
+            self.vault_path = Path(d)
             self.scan_vault()
 
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    win = OrphioAuditorPro()
+    app.setStyle("Fusion")
+    win = OrphioAuditor()
     win.show()
     sys.exit(app.exec())

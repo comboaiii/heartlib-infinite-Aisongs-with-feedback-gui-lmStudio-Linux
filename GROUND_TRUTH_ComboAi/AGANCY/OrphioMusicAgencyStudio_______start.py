@@ -1,16 +1,34 @@
 import sys
+import os
 import json
 import threading
-import os
 import random
 from pathlib import Path
+
+# --- CRITICAL FIX FOR WINDOWS DLL ERRORS (WinError 1114) ---
+# PyTorch MUST be imported BEFORE PyQt6 to initialize CUDA/C++ DLLs correctly.
+os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 
 # --- FIX: SYSTEM PATHS ---
 CURRENT_DIR = Path(__file__).resolve().parent
 if str(CURRENT_DIR) not in sys.path:
     sys.path.insert(0, str(CURRENT_DIR))
 
-# --- IMPORT PYQT6 ---
+# --- IMPORT ENGINE & CONFIG FIRST (Pre-loads Torch) ---
+try:
+    from orphio_config import conf
+    from orphio_engine import OrphioEngine
+    # We verify torch loaded successfully
+    import torch
+    print(f"✅ PyTorch loaded successfully. CUDA Available: {torch.cuda.is_available()}")
+except ImportError as e:
+    print(f"❌ Critical Engine Import Error: {e}")
+    sys.exit(1)
+except OSError as e:
+    print(f"❌ DLL Error (Visual C++ Redistributable might be missing): {e}")
+    sys.exit(1)
+
+# --- IMPORT PYQT6 AFTER TORCH ---
 from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
     QLabel, QPushButton, QTextEdit, QLineEdit, QFrame,
@@ -25,11 +43,9 @@ from PyQt6.QtMultimedia import QMediaPlayer, QAudioOutput
 # --- INTERNAL IMPORTS ---
 try:
     from agency_styles import MODERN_STYLES
-    from orphio_config import conf
-    from orphio_engine import OrphioEngine
     from tagSelector import TagSelectorDialog
 except ImportError as e:
-    print(f"❌ Critical Import Error: {e}")
+    print(f"❌ UI Component Import Error: {e}")
     sys.exit(1)
 
 

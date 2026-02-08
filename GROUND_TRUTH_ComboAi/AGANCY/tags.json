@@ -1,52 +1,26 @@
-[
-    "acoustic",
-    "acoustic guitar",
-    "alone",
-    "ballad",
-    "bright",
-    "cafe",
-    "clear",
-    "country",
-    "dating",
-    "driving",
-    "drum machine",
-    "drums",
-    "electric guitar",
-    "electronic",
-    "emotional",
-    "energetic",
-    "epic",
-    "faith",
-    "folk",
-    "gaming",
-    "heartbreak",
-    "hope",
-    "hopeful",
-    "joyful",
-    "keyboard",
-    "longing",
-    "love",
-    "meditation",
-    "piano",
-    "pop",
-    "powerful",
-    "r&b",
-    "reflection",
-    "regret",
-    "relationship",
-    "relaxing",
-    "rock",
-    "romantic",
-    "sad",
-    "self-discovery",
-    "soft",
-    "strings",
-    "struggle",
-    "sweet",
-    "synthesizer",
-    "walking",
-    "warm",
-    "wedding",
-    "workout",
-    "youthful"
-]
+{
+    "1_GENRE_95%": [
+        "Pop", "Rock", "Electronic", "Hiphop", "Jazz", "Classical", 
+        "Techno", "Trance", "Ambient", "Folk", "Country", "Metal", "R&B"
+    ],
+    "2_TIMBRE_50%": [
+        "Soft", "Warm", "Husky", "Bright", "Dark", "Distorted", "Clean", "Muffled"
+    ],
+    "3_GENDER_37%": [
+        "Male", "Female"
+    ],
+    "4_MOOD_32%": [
+        "Happy", "Sad", "Energetic", "Joyful", "Melancholic", 
+        "Relaxing", "Dark", "Epic", "Romantic", "Sentimental"
+    ],
+    "5_INSTRUMENT_25%": [
+        "Piano", "Synthesizer", "Acoustic Guitar", "Electric Guitar", 
+        "Bass", "Drums", "Strings", "Violin", "Drum Machine"
+    ],
+    "6_SCENE_20%": [
+        "Dance", "Workout", "Dating", "Study", "Cinematic", "Party", "Cafe", "Driving"
+    ],
+    "7_TOPIC_10%": [
+        "Love", "Summer", "Heartbreak", "Faith", "Youthful", "Struggle", "Reflection"
+    ]
+}

@@ -56,18 +56,42 @@ class OrphioEngine:
         return re.sub(r'(\*\*|__)?\[\s*(.*?)\s*\](\*\*|__)?', replace_tag, text)
 
     def _clean_tags_list(self, raw_tags):
-        """Aggressive Tag Scrubber for clean JSON Ledgers."""
+        """
+        Smart Scrubber: Enforces 8-Pillar Priority.
+        """
         text = raw_tags.replace('**', '').replace('__', '').replace('*', '')
         parts = re.split(r'[\n,;\t•]', text)
-        cleaned = []
+
+        # Define the High-Priority Anchors manually
+        known_genres = ["pop", "rock", "electronic", "hiphop", "jazz", "classical", "techno", "trance", "ambient",
+                        "folk", "country"]
+
+        found_anchors = []
+        other_tags = []
+
         for p in parts:
             p = re.sub(r'^\d+[\.\)]\s*', '', p.strip())
             if ':' in p: p = p.split(':')[0]
-            p = p.strip().lower()
-            if p and len(p.split()) <= 3 and len(p) < 35:
-                cleaned.append(p)
-        final_tags = list(dict.fromkeys(cleaned))[:6]
-        return final_tags if final_tags else ["melodic", "electronic"]
+            clean_tag = p.strip().lower()
+
+            if not clean_tag or len(clean_tag) < 2: continue
+
+            # Sort into Anchor vs Seasoning
+            if clean_tag in known_genres:
+                found_anchors.append(clean_tag)
+            else:
+                other_tags.append(clean_tag)
+
+        # Remove duplicates while preserving order
+        found_anchors = list(dict.fromkeys(found_anchors))
+        other_tags = list(dict.fromkeys(other_tags))
+
+        # REASSEMBLE: Anchors FIRST (Crucial for HeartMuLa stability)
+        # Limit to 1 Anchor (to avoid conflict) + 5 Seasoning tags
+        final_tags = found_anchors[:1] + other_tags
+
+        # Ensure we don't exceed 6 tags total (Prompting Strategy: "Less is More")
+        return final_tags[:6] if final_tags else ["melodic", "electronic"]
 
     def generate_lyrics_stage(self, topic: str):
         self.log("🔗 Connecting to LM Studio...")

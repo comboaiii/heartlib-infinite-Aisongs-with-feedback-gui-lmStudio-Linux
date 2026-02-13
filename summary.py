@@ -18,7 +18,7 @@ SHOW_MOD_TIME = True
 MAX_FILE_SIZE = 5_000_000  # 5 MB
 
 # Character limit for inclusion in the document.
-MAX_CHAR_LIMIT = 10000
+MAX_CHAR_LIMIT = 14000
 
 # A set of all files and directories to be explicitly excluded.
 EXCLUDED_ITEMS = {

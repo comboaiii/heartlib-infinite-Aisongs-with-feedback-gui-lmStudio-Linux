@@ -1,16 +1,25 @@
 DIRECTORY SUMMARY
 ============================================================
 Path: C:\Users\ppp\PycharmProjects\heartlib-infinite-Aisongs-with-feedback-gui-lmStudio-Linux\GROUND_TRUTH_ComboAi\AGANCY
-Generated: 2026-02-13 09:46:31
+Generated: 2026-02-14 09:07:18
 Timestamps: Enabled
 ============================================================
 
 SECTION 1: FILE CONTENTS
 ------------------------------
 AGANCY/
-│   ├── BACKUPS/  [Mod: 2026-02-12 22:36:20]
-│   ├── PRODUCER_STRATEGIES/  [Mod: 2026-02-13 08:11:30]
-│   │   ├── 1_Narrative_Concept.json  [Mod: 2026-02-13 08:09:20]
+│   ├── DRAFTS/  [Mod: 2026-02-14 05:31:52]
+│   │   └── auto_save_20260214_053152.json  [Mod: 2026-02-14 05:31:52]
+│   │       Content:
+│   │       {
+│   │           "topic": "song about  ai girls",
+│   │           "lyrics": "",
+│   │           "tags": "",
+│   │           "timestamp": "2026-02-14T05:31:52.353139"
+│   │       }
+│   │       
+│   ├── PRODUCER_STRATEGIES/  [Mod: 2026-02-14 04:48:40]
+│   │   ├── 1_Narrative_Concept.json  [Mod: 2026-02-14 04:48:29]
 │   │   │   Content:
 │   │   │   {
 │   │   │       "name": "Narrative Masterpiece",
@@ -25,7 +34,7 @@ AGANCY/
 │   │   │       }
 │   │   │   }
 │   │   │   
-│   │   ├── 2_Brand_Identity_Hits.json  [Mod: 2026-02-13 08:09:30]
+│   │   ├── 2_Brand_Identity_Hits.json  [Mod: 2026-02-14 04:48:29]
 │   │   │   Content:
 │   │   │   {
 │   │   │       "name": "Brand Identity Hits",
@@ -40,7 +49,7 @@ AGANCY/
 │   │   │       }
 │   │   │   }
 │   │   │   
-│   │   ├── 3_Circadian_Ambient_Flow.json  [Mod: 2026-02-13 08:10:24]
+│   │   ├── 3_Circadian_Ambient_Flow.json  [Mod: 2026-02-14 04:48:29]
 │   │   │   Content:
 │   │   │   {
 │   │   │       "name": "Circadian Ambient Flow",
@@ -55,7 +64,7 @@ AGANCY/
 │   │   │       }
 │   │   │   }
 │   │   │   
-│   │   └── 4_Mythic_Journey.json  [Mod: 2026-02-13 08:11:30]
+│   │   └── 4_Mythic_Journey.json  [Mod: 2026-02-14 04:48:29]
 │   │       Content:
 │   │       {
 │   │           "name": "Mythic Journey",
@@ -70,7 +79,7 @@ AGANCY/
 │   │           }
 │   │       }
 │   │       
-│   ├── agency_styles.py  [Mod: 2026-02-13 08:29:13]
+│   ├── agency_styles.py  [Mod: 2026-02-14 08:54:18]
 │   │   Content:
 │   │   # === AUTO-PATCHED: DLL Fix Import (DO NOT REMOVE) ===
 │   │   try:
@@ -88,215 +97,190 @@ AGANCY/
 │   │   # agency_styles.py
 │   │   # THEME: CYBER GREEN & DARK NOIR
 │   │   
-│   │   MODERN_STYLES = """
-│   │   /* 0. GLOBAL RESET */
-│   │   * {
-│   │       selection-background-color: #00FF7F !important;
-│   │       selection-color: #000000 !important;
-│   │       outline: none;
-│   │   }
+│   │   # agency_styles.py
+│   │   # THEME: CYBER GREEN & DARK NOIR (Enhanced)
 │   │   
-│   │   QMainWindow, QDialog, QFrame, QAbstractScrollArea {
-│   │       background-color: #09090B !important;
-│   │       color: #E4E4E7 !important;
+│   │   MODERN_STYLES = """
+│   │   /* === 0. GLOBAL & WINDOW === */
+│   │   QMainWindow, QDialog {
+│   │       background-color: #09090B;
+│   │       color: #E4E4E7;
 │   │       font-family: 'Inter', 'Segoe UI', sans-serif;
 │   │   }
+│   │   QWidget {
+│   │       background-color: #09090B;
+│   │       color: #E4E4E7;
+│   │       font-size: 13px;
+│   │   }
+│   │   QFrame { border: none; }
 │   │   
-│   │   /* 1. SECTION HEADERS */
+│   │   /* === 1. TYPOGRAPHY === */
+│   │   QLabel { color: #A1A1AA; background: transparent; }
 │   │   QLabel#SectionHeader {
-│   │       color: #71717A !important;
+│   │       color: #00FF7F;
 │   │       font-weight: 800;
-│   │       font-size: 10px;
+│   │       font-size: 11px;
 │   │       text-transform: uppercase;
-│   │       letter-spacing: 2px;
+│   │       letter-spacing: 1.5px;
 │   │       margin-top: 15px;
 │   │       margin-bottom: 5px;
+│   │       border-bottom: 2px solid #18181B;
+│   │       padding-bottom: 3px;
+│   │   }
+│   │   QLabel#StatLabel {
+│   │       color: #FFFFFF;
+│   │       font-size: 14px;
+│   │       font-weight: bold;
+│   │   }
+│   │   QLabel#StatValue {
+│   │       color: #00FF7F;
+│   │       font-family: 'Consolas', monospace;
+│   │       font-size: 12px;
 │   │   }
 │   │   
-│   │   /* 2. MAIN INPUT AREAS */
-│   │   QPlainTextEdit#TopicInput, QTextEdit, QLineEdit {
-│   │       background-color: #050505 !important;
-│   │       border: 1px solid #27272A !important;
+│   │   /* === 2. INPUT FIELDS === */
+│   │   QLineEdit, QTextEdit, QPlainTextEdit, QComboBox {
+│   │       background-color: #121214;
+│   │       border: 1px solid #27272A;
 │   │       border-radius: 6px;
 │   │       padding: 10px;
-│   │       color: #FFFFFF !important;
+│   │       color: #FAFAFA;
+│   │       selection-background-color: #00FF7F;
+│   │       selection-color: #000000;
 │   │   }
-│   │   QPlainTextEdit#TopicInput:focus, QTextEdit:focus, QLineEdit:focus {
-│   │       border: 1px solid #00FF7F !important;
+│   │   QLineEdit:focus, QTextEdit:focus, QPlainTextEdit:focus, QComboBox:focus {
+│   │       border: 1px solid #00FF7F;
+│   │       background-color: #000000;
 │   │   }
-│   │   
-│   │   /* Specific styling for the Live Tags field to make it "Active Green" */
-│   │   QLineEdit#LiveTags {
-│   │       color: #00FF7F !important;
-│   │       font-weight: bold;
-│   │       background-color: #0D0D0F !important;
-│   │       border: 1px solid #3F3F46 !important;
-│   │   }
-│   │   
-│   │   /* 3. SIDEBAR & SPLITTERS */
-│   │   QFrame#Sidebar {
-│   │       background-color: #0D0D0F !important;
-│   │       border-right: 1px solid #18181B !important;
+│   │   QLineEdit::placeholder, QTextEdit::placeholder {
+│   │       color: #52525B;
+│   │       font-style: italic;
 │   │   }
 │   │   
-│   │   QSplitter::handle {
-│   │       background-color: #18181B;
+│   │   /* === 3. BUTTONS === */
+│   │   QPushButton {
+│   │       padding: 10px 15px;
+│   │       border-radius: 5px;
+│   │       font-weight: 600;
+│   │       border: 1px solid transparent;
 │   │   }
-│   │   QSplitter::handle:horizontal { width: 1px; }
-│   │   QSplitter::handle:vertical { height: 1px; }
-│   │   
-│   │   /* 4. THE TAG LIBRARY TILES (High-End Badge Look) */
-│   │   QCheckBox#TagTile {
-│   │       color: #A1A1AA !important;
-│   │       background-color: #121214 !important;
-│   │       border: 1px solid #27272A !important;
-│   │       border-radius: 4px;
-│   │       padding: 12px 5px;
-│   │       font-weight: bold;
-│   │   }
-│   │   QCheckBox#TagTile::indicator { width: 0px; height: 0px; } 
-│   │   
-│   │   QCheckBox#TagTile:hover {
-│   │       background-color: #1C1C1F !important;
-│   │       border: 1px solid #3F3F46 !important;
-│   │       color: #FFFFFF !important;
-│   │   }
-│   │   QCheckBox#TagTile:checked {
-│   │       background-color: #00FF7F !important;
-│   │       color: #000000 !important;
-│   │       border: 1px solid #00FF7F !important;
-│   │   }
-│   │   
-│   │   /* 5. BUTTONS */
 │   │   QPushButton#PrimaryBtn {
-│   │       background-color: #00FF7F !important;
-│   │       color: #000000 !important;
+│   │       background-color: #00FF7F;
+│   │       color: #000000;
 │   │       font-weight: 900;
-│   │       border-radius: 4px;
-│   │       padding: 14px;
 │   │       text-transform: uppercase;
 │   │   }
-│   │   QPushButton#PrimaryBtn:hover { 
-│   │       background-color: #22C55E !important; 
+│   │   QPushButton#PrimaryBtn:hover {
+│   │       background-color: #22C55E;
+│   │       border: 1px solid #DCFCE7;
 │   │   }
-│   │   
 │   │   QPushButton#SecondaryBtn {
-│   │       background-color: #18181B !important;
-│   │       border: 1px solid #3F3F46 !important;
-│   │       color: #E4E4E7 !important;
-│   │       font-weight: bold;
+│   │       background-color: #18181B;
+│   │       border: 1px solid #3F3F46;
+│   │       color: #E4E4E7;
 │   │   }
-│   │   QPushButton#SecondaryBtn:hover { 
-│   │       border: 1px solid #00FF7F !important; 
-│   │       color: #00FF7F !important; 
+│   │   QPushButton#SecondaryBtn:hover {
+│   │       border-color: #00FF7F;
+│   │       color: #00FF7F;
+│   │       background-color: #121214;
 │   │   }
-│   │   
-│   │   QPushButton#FolderBtn {
-│   │       background-color: transparent !important;
-│   │       border: 1px solid #27272A !important;
-│   │       color: #00FF7F !important;
+│   │   QPushButton#IconBtn {
+│   │       background-color: transparent;
+│   │       color: #71717A;
 │   │       font-size: 16px;
 │   │   }
-│   │   QPushButton#FolderBtn:hover { 
-│   │       background-color: #00FF7F !important; 
-│   │       color: #000000 !important; 
+│   │   QPushButton#IconBtn:hover { color: #00FF7F; }
+│   │   
+│   │   /* === 4. LISTS & TABLES (The Vault) === */
+│   │   QListWidget, QTableWidget {
+│   │       background-color: #050505;
+│   │       border: 1px solid #18181B;
+│   │       border-radius: 6px;
+│   │       outline: none;
+│   │   }
+│   │   QListWidget::item, QTableWidget::item {
+│   │       padding: 8px;
+│   │       border-bottom: 1px solid #0D0D0F;
+│   │       color: #A1A1AA;
+│   │   }
+│   │   QListWidget::item:selected, QTableWidget::item:selected {
+│   │       background-color: #18181B;
+│   │       color: #00FF7F;
+│   │       border-left: 3px solid #00FF7F;
+│   │   }
+│   │   QListWidget::item:hover {
+│   │       background-color: #0E0E11;
+│   │       color: #FFFFFF;
 │   │   }
 │   │   
-│   │   /* 6. TABS (Album Queue / Lyric Editor) */
-│   │   /* These target the buttons used as tabs in the center pane */
-│   │   QPushButton#TabBtn {
-│   │       background-color: #18181B;
+│   │   /* === 5. SCROLLBARS (Crucial for Dark Mode) === */
+│   │   QScrollBar:vertical {
+│   │       background: #09090B;
+│   │       width: 8px;
+│   │       margin: 0px;
+│   │   }
+│   │   QScrollBar::handle:vertical {
+│   │       background: #27272A;
+│   │       min-height: 20px;
+│   │       border-radius: 4px;
+│   │   }
+│   │   QScrollBar::handle:vertical:hover { background: #00FF7F; }
+│   │   QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical { height: 0px; }
+│   │   
+│   │   /* === 6. TABS === */
+│   │   QTabWidget::pane { border: 1px solid #18181B; }
+│   │   QTabBar::tab {
+│   │       background: #09090B;
 │   │       color: #71717A;
-│   │       border: none;
-│   │       padding: 12px 20px;
+│   │       padding: 8px 20px;
+│   │       border-bottom: 2px solid transparent;
 │   │       font-weight: bold;
 │   │       text-transform: uppercase;
-│   │       font-size: 11px;
 │   │   }
-│   │   QPushButton#TabBtn:hover {
+│   │   QTabBar::tab:selected {
 │   │       color: #00FF7F;
+│   │       border-bottom: 2px solid #00FF7F;
 │   │   }
-│   │   QPushButton#TabBtn[active="true"] {
-│   │       background-color: #00FF7F !important;
-│   │       color: #000000 !important;
+│   │   QTabBar::tab:hover { color: #FFFFFF; }
+│   │   
+│   │   /* === 7. SIDEBAR SPECIFIC === */
+│   │   QFrame#Sidebar {
+│   │       background-color: #0C0C0E;
+│   │       border-right: 1px solid #18181B;
+│   │   }
+│   │   QFrame#Inspector {
+│   │       background-color: #0C0C0E;
+│   │       border-left: 1px solid #18181B;
 │   │   }
 │   │   
-│   │   /* 7. VAULT & LISTS */
-│   │   QListWidget {
-│   │       background-color: #050505 !important;
-│   │       border: 1px solid #18181B !important;
-│   │       border-radius: 6px;
-│   │   }
-│   │   QListWidget::item {
-│   │       padding: 10px;
-│   │       border-bottom: 1px solid #0D0D0F !important;
-│   │   }
-│   │   QListWidget::item:selected {
-│   │       background-color: #18181B !important;
-│   │       color: #00FF7F !important;
-│   │       border-left: 3px solid #00FF7F !important;
-│   │   }
-│   │   
-│   │   /* 8. PROGRESS BAR (Batch Rendering) */
+│   │   /* === 8. PROGRESS BAR === */
 │   │   QProgressBar {
 │   │       background-color: #18181B;
 │   │       border: none;
-│   │       border-radius: 2px;
+│   │       height: 4px;
 │   │       text-align: center;
-│   │       color: transparent;
 │   │   }
 │   │   QProgressBar::chunk {
 │   │       background-color: #00FF7F;
 │   │       border-radius: 2px;
 │   │   }
 │   │   
-│   │   /* 9. PRO-AUDIO SLIDERS */
+│   │   /* === 9. SLIDERS === */
 │   │   QSlider::groove:horizontal {
 │   │       height: 4px;
-│   │       background: #18181B;
+│   │       background: #27272A;
 │   │       border-radius: 2px;
 │   │   }
 │   │   QSlider::handle:horizontal {
 │   │       background: #00FF7F;
-│   │       border: 2px solid #09090B;
-│   │       width: 16px; height: 16px;
-│   │       margin: -6px 0;
-│   │       border-radius: 8px;
-│   │   }
-│   │   
-│   │   /* 10. INSPECTOR GRID LABELS */
-│   │   QLabel#SpecLabel {
-│   │       color: #00FF7F !important;
-│   │       font-family: 'Consolas', 'Monaco', monospace;
-│   │       font-size: 11px;
-│   │       background: #121214;
-│   │       padding: 5px;
-│   │       border-radius: 3px;
-│   │   }
-│   │   
-│   │   /* 11. SCROLLBARS */
-│   │   QScrollBar:vertical {
-│   │       background: #09090B !important;
-│   │       width: 10px;
-│   │   }
-│   │   QScrollBar::handle:vertical {
-│   │       background: #27272A !important;
-│   │       border-radius: 5px;
-│   │       min-height: 20px;
-│   │   }
-│   │   QScrollBar::handle:vertical:hover {
-│   │       background: #3F3F46 !important;
-│   │   }
-│   │   QScrollBar::add-line, QScrollBar::sub-line { height: 0px; }
-│   │   
-│   │   /* 12. VIEWPORT FIX */
-│   │   QScrollArea, QScrollArea > QWidget, QScrollArea > QWidget > QWidget {
-│   │       background-color: #09090B !important;
-│   │       border: none !important;
+│   │       width: 14px;
+│   │       height: 14px;
+│   │       margin: -5px 0;
+│   │       border-radius: 7px;
 │   │   }
 │   │   """
 │   │   
-│   ├── Album_Post_Processor.py  [Mod: 2026-02-12 22:11:02]
+│   ├── Album_Post_Processor.py  [Mod: 2026-02-14 04:48:29]
 │   │   Content:
 │   │   # === AUTO-PATCHED: DLL Fix Import (DO NOT REMOVE) ===
 │   │   try:
@@ -481,7 +465,7 @@ AGANCY/
 │   │           processor = AlbumPostProcessor(albums[choice])
 │   │           processor.process_album()
 │   │   
-│   ├── Blueprint_Executor.py  [Mod: 2026-02-13 08:32:49]
+│   ├── Blueprint_Executor.py  [Mod: 2026-02-14 04:48:29]
 │   │   Content:
 │   │   # === AUTO-PATCHED: DLL Fix Import (DO NOT REMOVE) ===
 │   │   try:
@@ -731,7 +715,7 @@ AGANCY/
 │   │               return album_path
 │   │           return None
 │   │   
-│   ├── EnhancedModelScanner.py  [Mod: 2026-02-12 22:11:02]
+│   ├── EnhancedModelScanner.py  [Mod: 2026-02-14 04:48:29]
 │   │   Content:
 │   │   # === AUTO-PATCHED: DLL Fix Import (DO NOT REMOVE) ===
 │   │   try:
@@ -1008,10 +992,10 @@ AGANCY/
 │   │   if __name__ == "__main__":
 │   │       main()
 │   │   
-│   ├── human_evaluation.py  [Mod: 2026-02-12 22:11:02]
+│   ├── human_evaluation.py  [Mod: 2026-02-14 04:48:29]
 │   │   [Content omitted: Exceeds 20000 character limit]
 │   │   
-│   ├── IndividualSongRenderer.py  [Mod: 2026-02-12 22:11:02]
+│   ├── IndividualSongRenderer.py  [Mod: 2026-02-14 04:48:29]
 │   │   Content:
 │   │   # === AUTO-PATCHED: DLL Fix Import (DO NOT REMOVE) ===
 │   │   try:
@@ -1247,7 +1231,7 @@ AGANCY/
 │   │   if __name__ == "__main__":
 │   │       main()
 │   │   
-│   ├── lmstudio_controler.py  [Mod: 2026-02-13 09:14:39]
+│   ├── lmstudio_controler.py  [Mod: 2026-02-14 04:48:29]
 │   │   Content:
 │   │   # === AUTO-PATCHED: DLL Fix Import (DO NOT REMOVE) ===
 │   │   try:
@@ -1397,24 +1381,22 @@ AGANCY/
 │   │               # and let the engine handle VRAM clearing via torch.cuda.empty_cache()
 │   │               return False
 │   │   
-│   ├── Orphio_Command_Center2.py  [Mod: 2026-02-12 22:11:02]
+│   ├── Orphio_Command_Center2.py  [Mod: 2026-02-14 04:48:29]
 │   │   [Content omitted: Exceeds 20000 character limit]
 │   │   
-│   ├── Orphio_Command_Center3.py  [Mod: 2026-02-12 22:11:02]
-│   │   [Content omitted: Exceeds 20000 character limit]
-│   │   
-│   ├── orphio_config.py  [Mod: 2026-02-12 22:11:02]
+│   ├── orphio_config.py  [Mod: 2026-02-14 04:48:29]
 │   │   Content:
 │   │   # === AUTO-PATCHED: DLL Fix Import (DO NOT REMOVE) ===
 │   │   try:
 │   │       import windows_dll_fix
 │   │   except ImportError:
 │   │       import os, sys
+│   │   
 │   │       os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 │   │       if sys.platform == "win32":
-│   │           try: 
+│   │           try:
 │   │               os.add_dll_directory(r"C:\Windows\System32")
-│   │           except: 
+│   │           except:
 │   │               pass
 │   │   # === END AUTO-PATCH ===
 │   │   
@@ -1436,20 +1418,42 @@ AGANCY/
 │   │   
 │   │   @dataclass
 │   │   class Config:
-│   │       # ... (Keep your existing path definitions here) ...
+│   │       # Path Configuration
 │   │       ROOT_DIR: Path = find_actual_root()
 │   │       CKPT_DIR: Path = ROOT_DIR / "ckpt"
 │   │       SRC_DIR: Path = ROOT_DIR / "src"
 │   │       OUTPUT_DIR: Path = ROOT_DIR / "GROUND_TRUTH_ComboAi" / "outputSongs_ComboAi"
 │   │       TAGS_FILE: Path = ROOT_DIR / "GROUND_TRUTH_ComboAi" / "tags.json"
 │   │   
+│   │       # Network Configuration
 │   │       LM_STUDIO_URL: str = "http://localhost:1234/v1"
+│   │   
+│   │       # Audio Engine Settings
 │   │       COOLFOOT_WAIT: float = 0.1
 │   │       SAMPLE_RATE: int = 48000
 │   │       FADE_OUT_DURATION: float = 0.2
 │   │   
+│   │       # =========================================================================
+│   │       # RENDERING PARAMETER RANGES (NEW)
+│   │       # =========================================================================
+│   │       # These define the allowed ranges for user adjustment
+│   │       CFG_RANGE: tuple = (1.0, 3.0)  # Classifier-Free Guidance Scale range
+│   │       TEMP_RANGE: tuple = (0.7, 1.3)  # Temperature range for generation
+│   │       DURATION_RANGE: tuple = (30, 300)  # Duration in seconds (min, max)
+│   │   
+│   │       # Default values (used as initial settings)
+│   │       DEFAULT_CFG: float = 1.5  # Default CFG scale
+│   │       DEFAULT_TEMP: float = 1.0  # Default temperature
+│   │       DEFAULT_DURATION: int = 120  # Default duration in seconds
+│   │   
+│   │       # =========================================================================
+│   │       # DECORATOR SCHEMA SELECTION
+│   │       # =========================================================================
 │   │       CURRENT_DECORATOR_SCHEMA: str = "1_clean_standard"
 │   │   
+│   │       # =========================================================================
+│   │       # LLM PROMPTS
+│   │       # =========================================================================
 │   │       PROMPT_WRITER: str = (
 │   │           "You are a professional Songwriter. Write clean lyrics based on the user's topic.\n"
 │   │           "STRICT FORMATTING:\n"
@@ -1469,7 +1473,7 @@ AGANCY/
 │   │       )
 │   │   
 │   │       # =========================================================================
-│   │       #  DECORATION STRATEGIES (The "Secret Sauce" for Audio Gen)
+│   │       # DECORATION STRATEGIES (The "Secret Sauce" for Audio Gen)
 │   │       # =========================================================================
 │   │       DECORATOR_SCHEMAS = {
 │   │           "1_clean_standard": (
@@ -1543,13 +1547,21 @@ AGANCY/
 │   │       }
 │   │   
 │   │       def validate(self):
+│   │           """Validates and creates necessary directories and files"""
 │   │           self.OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-│   │           # Ensure tags file exists (simplified)
+│   │   
+│   │           # Ensure tags file exists
 │   │           if not self.TAGS_FILE.exists():
+│   │               default_tags = {
+│   │                   "Genre": ["Pop", "Rock", "Electronic", "Jazz"],
+│   │                   "Mood": ["Happy", "Sad", "Energetic"],
+│   │                   "Gender": ["Male", "Female"]
+│   │               }
 │   │               with open(self.TAGS_FILE, 'w') as f:
-│   │                   json.dump({"Genre": ["Pop", "Rock"]}, f)
+│   │                   json.dump(default_tags, f, indent=4)
 │   │   
 │   │       def set_output_dir(self, new_path: str):
+│   │           """Updates the output directory"""
 │   │           path = Path(new_path)
 │   │           if path.exists() and path.is_dir():
 │   │               self.OUTPUT_DIR = path
@@ -1557,12 +1569,21 @@ AGANCY/
 │   │           else:
 │   │               print("❌ Invalid directory selected.")
 │   │   
+│   │       def update_defaults(self, cfg=None, temp=None, duration=None):
+│   │           """Updates default rendering parameters"""
+│   │           if cfg is not None and self.CFG_RANGE[0] <= cfg <= self.CFG_RANGE[1]:
+│   │               self.DEFAULT_CFG = cfg
+│   │           if temp is not None and self.TEMP_RANGE[0] <= temp <= self.TEMP_RANGE[1]:
+│   │               self.DEFAULT_TEMP = temp
+│   │           if duration is not None and self.DURATION_RANGE[0] <= duration <= self.DURATION_RANGE[1]:
+│   │               self.DEFAULT_DURATION = duration
 │   │   
 │   │   
+│   │   # Initialize global config instance
 │   │   conf = Config()
 │   │   conf.validate()
 │   │   
-│   ├── orphio_engine.py  [Mod: 2026-02-12 22:11:02]
+│   ├── orphio_engine.py  [Mod: 2026-02-14 04:48:29]
 │   │   Content:
 │   │   # === AUTO-PATCHED: DLL Fix Import (DO NOT REMOVE) ===
 │   │   try:
@@ -1792,7 +1813,7 @@ AGANCY/
 │   │               self.log(f"❌ Error: {e}")
 │   │               raise e
 │   │   
-│   ├── orphio_schema.py  [Mod: 2026-02-12 22:11:02]
+│   ├── orphio_schema.py  [Mod: 2026-02-14 04:48:29]
 │   │   Content:
 │   │   # === AUTO-PATCHED: DLL Fix Import (DO NOT REMOVE) ===
 │   │   try:
@@ -1881,7 +1902,7 @@ AGANCY/
 │   │               human_evaluation=HumanEvaluation()
 │   │           )
 │   │   
-│   ├── OrphioMusicAgencyStudio_______start.py  [Mod: 2026-02-12 22:11:02]
+│   ├── OrphioMusicAgencyStudio_______start.py  [Mod: 2026-02-14 04:48:29]
 │   │   Content:
 │   │   # === AUTO-PATCHED: DLL Fix Import (DO NOT REMOVE) ===
 │   │   try:
@@ -2339,10 +2360,13 @@ AGANCY/
 │   │       win.show()
 │   │       sys.exit(app.exec())
 │   │   
-│   ├── OrphioProductionStudio___________COMPLETE.py  [Mod: 2026-02-13 08:56:57]
+│   ├── OrphioProductionStudio___________COMPLETE.py  [Mod: 2026-02-14 08:55:27]
 │   │   [Content omitted: Exceeds 20000 character limit]
 │   │   
-│   ├── RUN_FULL_ALBUM_PIPELINE___________start.py  [Mod: 2026-02-12 22:11:02]
+│   ├── OrphioProductionStudio___________COMPLETE2.py  [Mod: 2026-02-14 08:44:09]
+│   │   [Content omitted: Exceeds 20000 character limit]
+│   │   
+│   ├── RUN_FULL_ALBUM_PIPELINE___________start.py  [Mod: 2026-02-14 04:48:29]
 │   │   Content:
 │   │   # === AUTO-PATCHED: DLL Fix Import (DO NOT REMOVE) ===
 │   │   try:
@@ -2465,7 +2489,7 @@ AGANCY/
 │   │   if __name__ == "__main__":
 │   │       main()
 │   │   
-│   ├── SYSTEM_OVERVIEW.md  [Mod: 2026-02-12 20:28:12]
+│   ├── SYSTEM_OVERVIEW.md  [Mod: 2026-02-14 08:46:37]
 │   │   Content:
 │   │   # ORPHIO PRODUCTION STUDIO - COMPLETE SYSTEM OVERVIEW
 │   │   
@@ -2675,7 +2699,7 @@ AGANCY/
 │   │   
 │   │   ### 3. Launch Application
 │   │   ```bash
-│   │   python OrphioProductionStudio___________COMPLETE.py
+│   │   python OrphioProductionStudio___________COMPLETE2.py
 │   │   ```
 │   │   
 │   │   ### 4. Create First Album
@@ -2955,7 +2979,7 @@ AGANCY/
 │   │   
 │   │   *Happy creating! 🎵✨*
 │   │   
-│   ├── SystemSetupChecker.py  [Mod: 2026-02-12 22:11:02]
+│   ├── SystemSetupChecker.py  [Mod: 2026-02-14 04:48:29]
 │   │   Content:
 │   │   # === AUTO-PATCHED: DLL Fix Import (DO NOT REMOVE) ===
 │   │   try:
@@ -3337,164 +3361,426 @@ AGANCY/
 │   │   if __name__ == "__main__":
 │   │       main()
 │   │   
-│   ├── tags.json  [Mod: 2026-02-08 21:11:49]
+│   ├── tags.json  [Mod: 2026-02-14 06:38:03]
 │   │   Content:
 │   │   {
 │   │       "1_GENRE_95%": [
-│   │           "Pop", "Rock", "Electronic", "Hiphop", "Jazz", "Classical", 
-│   │           "Techno", "Trance", "Ambient", "Folk", "Country", "Metal", "R&B"
+│   │           "Pop", "Rock", "Electronic", "Hip Hop", "Jazz", "Classical",
+│   │           "Techno", "Trance", "Ambient", "Folk", "Country", "Metal", 
+│   │           "R&B", "Soul", "Funk", "Disco", "Reggae", "Blues", "Indie",
+│   │           "Alternative", "Punk", "Grunge", "EDM", "House", "Dubstep",
+│   │           "Trap", "Lo-fi", "Chillwave", "Synthwave", "Vaporwave"
 │   │       ],
 │   │       "2_TIMBRE_50%": [
-│   │           "Soft", "Warm", "Husky", "Bright", "Dark", "Distorted", "Clean", "Muffled"
+│   │           "Soft", "Warm", "Husky", "Bright", "Dark", "Distorted", 
+│   │           "Clean", "Muffled", "Crisp", "Raspy", "Smooth", "Breathy",
+│   │           "Powerful", "Delicate", "Rich", "Thin", "Full", "Airy"
 │   │       ],
 │   │       "3_GENDER_37%": [
-│   │           "Male", "Female"
+│   │           "Male Vocals", "Female Vocals", "Mixed Vocals", "Choir",
+│   │           "Spoken Word", "Rap", "Falsetto", "Baritone", "Soprano"
 │   │       ],
 │   │       "4_MOOD_32%": [
-│   │           "Happy", "Sad", "Energetic", "Joyful", "Melancholic", 
-│   │           "Relaxing", "Dark", "Epic", "Romantic", "Sentimental"
+│   │           "Happy", "Sad", "Energetic", "Joyful", "Melancholic",
+│   │           "Relaxing", "Dark", "Epic", "Romantic", "Sentimental",
+│   │           "Angry", "Peaceful", "Anxious", "Hopeful", "Nostalgic",
+│   │           "Triumphant", "Mysterious", "Playful", "Somber", "Uplifting",
+│   │           "Bittersweet", "Dreamy", "Intense", "Calm", "Aggressive"
 │   │       ],
 │   │       "5_INSTRUMENT_25%": [
-│   │           "Piano", "Synthesizer", "Acoustic Guitar", "Electric Guitar", 
-│   │           "Bass", "Drums", "Strings", "Violin", "Drum Machine"
+│   │           "Piano", "Synthesizer", "Acoustic Guitar", "Electric Guitar",
+│   │           "Bass", "Drums", "Strings", "Violin", "Drum Machine",
+│   │           "808", "Saxophone", "Trumpet", "Flute", "Organ",
+│   │           "Harmonica", "Banjo", "Ukulele", "Cello", "Harp",
+│   │           "Steel Drums", "Percussion", "Brass", "Woodwinds"
 │   │       ],
 │   │       "6_SCENE_20%": [
-│   │           "Dance", "Workout", "Dating", "Study", "Cinematic", "Party", "Cafe", "Driving"
+│   │           "Dance", "Workout", "Dating", "Study", "Cinematic", 
+│   │           "Party", "Cafe", "Driving", "Meditation", "Sleep",
+│   │           "Gaming", "Cooking", "Road Trip", "Beach", "Rainy Day",
+│   │           "Sunrise", "Sunset", "Night Out", "Chill Session"
 │   │       ],
 │   │       "7_TOPIC_10%": [
-│   │           "Love", "Summer", "Heartbreak", "Faith", "Youthful", "Struggle", "Reflection"
+│   │           "Love", "Summer", "Heartbreak", "Faith", "Youthful", 
+│   │           "Struggle", "Reflection", "Freedom", "Loss", "Hope",
+│   │           "Adventure", "Dreams", "Rebellion", "Nature", "City Life",
+│   │           "Memories", "Change", "Identity", "Justice", "Time"
+│   │       ],
+│   │       "8_PRODUCTION_15%": [
+│   │           "Lo-fi", "Hi-fi", "Reverb-heavy", "Dry", "Compressed",
+│   │           "Dynamic", "Minimal", "Layered", "Stripped", "Polished",
+│   │           "Raw", "Atmospheric", "Punchy", "Spacious", "Tight"
+│   │       ],
+│   │       "9_TEMPO_28%": [
+│   │           "Slow", "Mid-tempo", "Up-tempo", "Fast", "Very Fast",
+│   │           "Ballad", "Downtempo", "Moderate", "Accelerating"
+│   │       ],
+│   │       "10_STYLE_18%": [
+│   │           "Retro", "Modern", "Vintage", "Futuristic", "Minimalist",
+│   │           "Maximalist", "Experimental", "Traditional", "Fusion",
+│   │           "Crossover", "Underground", "Mainstream", "Art Pop"
 │   │       ]
 │   │   }
 │   │   
-│   ├── tagSelector.py  [Mod: 2026-02-12 22:11:02]
+│   ├── tagSelector.py  [Mod: 2026-02-14 07:07:12]
 │   │   Content:
-│   │   # === AUTO-PATCHED: DLL Fix Import (DO NOT REMOVE) ===
-│   │   try:
-│   │       import windows_dll_fix
-│   │   except ImportError:
-│   │       import os, sys
-│   │       os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
-│   │       if sys.platform == "win32":
-│   │           try: 
-│   │               os.add_dll_directory(r"C:\Windows\System32")
-│   │           except: 
-│   │               pass
-│   │   # === END AUTO-PATCH ===
-│   │   
 │   │   import json
-│   │   from PyQt6.QtWidgets import (QDialog, QVBoxLayout, QScrollArea, QWidget,
-│   │                                QCheckBox, QPushButton, QLineEdit, QGridLayout,
-│   │                                QSizePolicy)
+│   │   import sys
+│   │   from pathlib import Path
+│   │   from typing import List
+│   │   from PyQt6.QtWidgets import (
+│   │       QApplication, QDialog, QVBoxLayout, QScrollArea, QWidget,
+│   │       QCheckBox, QPushButton, QLineEdit, QGridLayout,
+│   │       QSizePolicy, QLabel, QHBoxLayout, QFrame
+│   │   )
 │   │   from PyQt6.QtCore import Qt
-│   │   from orphio_config import conf
+│   │   
+│   │   # === COMPACT & PROFESSIONAL STYLESHEET ===
+│   │   COMPACT_TAG_STYLES = """
+│   │   /* MAIN DIALOG */
+│   │   QDialog { 
+│   │       background-color: #0A0A0C; 
+│   │       color: #E4E4E7;
+│   │   }
+│   │   
+│   │   /* SEARCH BAR */
+│   │   QLineEdit {
+│   │       background-color: #18181B;
+│   │       border: 1px solid #3F3F46;
+│   │       border-radius: 6px;
+│   │       padding: 10px 16px;
+│   │       color: #FFFFFF;
+│   │       font-size: 13px;
+│   │       font-weight: 500;
+│   │   }
+│   │   QLineEdit:focus { 
+│   │       border: 1px solid #00FF7F; 
+│   │   }
+│   │   QLineEdit::placeholder {
+│   │       color: #52525B;
+│   │       font-style: italic;
+│   │   }
+│   │   
+│   │   /* SCROLL AREA */
+│   │   QScrollArea { 
+│   │       border: none; 
+│   │       background-color: transparent; 
+│   │   }
+│   │   
+│   │   /* CATEGORY HEADERS - MORE COMPACT */
+│   │   QLabel#CategoryHeader {
+│   │       color: #00FF7F;
+│   │       font-size: 10px;
+│   │       font-weight: 800;
+│   │       letter-spacing: 1.5px;
+│   │       background-color: transparent;
+│   │       padding: 8px 0px 4px 0px;
+│   │       margin-top: 12px;
+│   │       border-bottom: 2px solid #27272A;
+│   │   }
+│   │   
+│   │   /* TAG CHECKBOXES - COMPACT TILES */
+│   │   QCheckBox {
+│   │       color: #D4D4D8;
+│   │       background-color: #18181B;
+│   │       border: 1px solid #27272A;
+│   │       border-radius: 4px;
+│   │       padding: 8px 12px;
+│   │       font-size: 12px;
+│   │       font-weight: 500;
+│   │   }
+│   │   
+│   │   QCheckBox::indicator {
+│   │       width: 0px;
+│   │       height: 0px;
+│   │   }
+│   │   
+│   │   QCheckBox:hover {
+│   │       background-color: #27272A;
+│   │       color: #FFFFFF;
+│   │       border: 1px solid #52525B;
+│   │   }
+│   │   
+│   │   QCheckBox:checked {
+│   │       background-color: #00FF7F;
+│   │       color: #000000;
+│   │       border: 1px solid #00FF7F;
+│   │       font-weight: 700;
+│   │   }
+│   │   
+│   │   /* BUTTONS - COMPACT */
+│   │   QPushButton#PrimaryBtn {
+│   │       background-color: #00FF7F;
+│   │       color: #000000;
+│   │       border: none;
+│   │       border-radius: 6px;
+│   │       font-weight: 900;
+│   │       font-size: 13px;
+│   │       padding: 12px;
+│   │       text-transform: uppercase;
+│   │   }
+│   │   QPushButton#PrimaryBtn:hover { 
+│   │       background-color: #00E672; 
+│   │   }
+│   │   
+│   │   QPushButton#SecondaryBtn {
+│   │       background-color: #27272A;
+│   │       color: #A1A1AA;
+│   │       border: 1px solid #3F3F46;
+│   │       border-radius: 4px;
+│   │       padding: 6px 12px;
+│   │       font-size: 11px;
+│   │       font-weight: 600;
+│   │   }
+│   │   QPushButton#SecondaryBtn:hover { 
+│   │       color: #FFFFFF; 
+│   │       background-color: #3F3F46;
+│   │   }
+│   │   
+│   │   /* FOOTER */
+│   │   QFrame#Footer {
+│   │       background-color: #111113;
+│   │       border-top: 1px solid #27272A;
+│   │       padding: 12px;
+│   │   }
+│   │   
+│   │   QLabel#SelectionLabel {
+│   │       color: #71717A;
+│   │       font-size: 11px;
+│   │       padding: 8px;
+│   │       background-color: #18181B;
+│   │       border-radius: 4px;
+│   │       border-left: 2px solid #00FF7F;
+│   │   }
+│   │   
+│   │   /* SCROLLBAR - THIN */
+│   │   QScrollBar:vertical {
+│   │       background: transparent; 
+│   │       width: 8px;
+│   │   }
+│   │   QScrollBar::handle:vertical {
+│   │       background: #3F3F46; 
+│   │       min-height: 30px; 
+│   │       border-radius: 4px;
+│   │   }
+│   │   QScrollBar::handle:vertical:hover { 
+│   │       background: #52525B; 
+│   │   }
+│   │   QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical { 
+│   │       height: 0px; 
+│   │   }
+│   │   """
 │   │   
 │   │   
 │   │   class TagSelectorDialog(QDialog):
-│   │       def __init__(self, current_tags_str, parent=None):
+│   │       """Compact, professional tag library"""
+│   │   
+│   │       def __init__(self, current_tags_str="", parent=None):
 │   │           super().__init__(parent)
-│   │           self.setWindowTitle("Global Tag Library")
-│   │           self.setMinimumSize(800, 700)
+│   │           self.setWindowTitle("Tag Library")
+│   │   
+│   │           # MUCH SMALLER SIZE
+│   │           self.resize(1000, 700)
+│   │           self.setMinimumSize(900, 600)
 │   │   
 │   │           self.initially_selected = [t.strip().lower() for t in current_tags_str.split(",") if t.strip()]
 │   │           self.checkboxes = []
+│   │           self.category_widgets = []
+│   │   
+│   │           self.setStyleSheet(COMPACT_TAG_STYLES)
 │   │           self.init_ui()
 │   │           self.load_tags()
 │   │   
 │   │       def init_ui(self):
+│   │           """Initialize compact UI"""
 │   │           layout = QVBoxLayout(self)
-│   │           layout.setContentsMargins(25, 25, 25, 25)
-│   │           layout.setSpacing(15)
+│   │           layout.setContentsMargins(20, 20, 20, 20)
+│   │           layout.setSpacing(12)
 │   │   
-│   │           # Search Bar
+│   │           # COMPACT HEADER
+│   │           header = QHBoxLayout()
+│   │   
+│   │           title = QLabel("TAG LIBRARY")
+│   │           title.setStyleSheet("color: #00FF7F; font-weight: 900; font-size: 18px; letter-spacing: 2px;")
+│   │           header.addWidget(title)
+│   │   
+│   │           header.addStretch()
+│   │   
+│   │           btn_clear = QPushButton("Clear All")
+│   │           btn_clear.setObjectName("SecondaryBtn")
+│   │           btn_clear.clicked.connect(self.clear_all)
+│   │           header.addWidget(btn_clear)
+│   │   
+│   │           layout.addLayout(header)
+│   │   
+│   │           # COMPACT SEARCH
 │   │           self.search_input = QLineEdit()
-│   │           self.search_input.setPlaceholderText("🔍 Filter genre or mood...")
+│   │           self.search_input.setPlaceholderText("Filter tags... (e.g. 'Dark', 'Pop', '95%')")
 │   │           self.search_input.textChanged.connect(self.filter_tags)
 │   │           layout.addWidget(self.search_input)
 │   │   
-│   │           # Scroll Area
+│   │           # SCROLLABLE TAG AREA
 │   │           self.scroll = QScrollArea()
 │   │           self.scroll.setWidgetResizable(True)
+│   │           self.scroll.setFrameShape(QFrame.Shape.NoFrame)
+│   │           self.scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
 │   │   
 │   │           self.container = QWidget()
-│   │           self.container.setObjectName("TagContainer")
-│   │           # Ensure background is dark
-│   │           self.container.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, True)
-│   │   
-│   │           self.grid_layout = QGridLayout(self.container)
-│   │           self.grid_layout.setSpacing(8)  # Space between tiles
+│   │           self.main_layout = QVBoxLayout(self.container)
+│   │           self.main_layout.setSpacing(8)
+│   │           self.main_layout.setContentsMargins(0, 0, 10, 0)
 │   │   
 │   │           self.scroll.setWidget(self.container)
-│   │           layout.addWidget(self.scroll)
+│   │           layout.addWidget(self.scroll, 1)
 │   │   
-│   │           # Apply Button
-│   │           self.ok_btn = QPushButton("APPLY SELECTED TAGS")
-│   │           self.ok_btn.setObjectName("PrimaryBtn")
-│   │           self.ok_btn.setCursor(Qt.CursorShape.PointingHandCursor)
-│   │           self.ok_btn.clicked.connect(self.accept)
-│   │           layout.addWidget(self.ok_btn)
+│   │           # COMPACT FOOTER
+│   │           footer = QFrame()
+│   │           footer.setObjectName("Footer")
+│   │           footer_layout = QVBoxLayout(footer)
+│   │           footer_layout.setContentsMargins(0, 0, 0, 0)
+│   │           footer_layout.setSpacing(10)
+│   │   
+│   │           self.selection_label = QLabel("No tags selected")
+│   │           self.selection_label.setObjectName("SelectionLabel")
+│   │           self.selection_label.setWordWrap(True)
+│   │           footer_layout.addWidget(self.selection_label)
+│   │   
+│   │           self.apply_btn = QPushButton("Apply Selection")
+│   │           self.apply_btn.setObjectName("PrimaryBtn")
+│   │           self.apply_btn.clicked.connect(self.accept)
+│   │           footer_layout.addWidget(self.apply_btn)
+│   │   
+│   │           layout.addWidget(footer)
 │   │   
 │   │       def load_tags(self):
+│   │           """Load tags from JSON"""
+│   │           path = Path(__file__).parent / "tags.json"
+│   │           if not path.exists():
+│   │               return
+│   │   
 │   │           try:
-│   │               if not conf.TAGS_FILE.exists(): return
-│   │               with open(conf.TAGS_FILE, 'r') as f:
+│   │               with open(path, 'r', encoding='utf-8') as f:
 │   │                   data = json.load(f)
 │   │   
-│   │               # Check if it's the new Dict structure or old List structure
-│   │               if isinstance(data, list):
-│   │                   # Fallback for old style
-│   │                   all_tags = sorted(data)
-│   │                   self._populate_grid(all_tags, 0)
-│   │               else:
-│   │                   # NEW HIERARCHICAL STYLE
-│   │                   row_pointer = 0
-│   │                   for category, tags in sorted(data.items()):
-│   │                       # Add a Section Header
-│   │                       lbl = QLabel(category)
-│   │                       lbl.setStyleSheet("color: #FF9F1A; font-weight: bold; margin-top: 10px;")
-│   │                       self.grid_layout.addWidget(lbl, row_pointer, 0, 1, 4)  # Span 4 columns
-│   │                       row_pointer += 1
+│   │               for cat_key in sorted(data.keys()):
+│   │                   # Clean up category name
+│   │                   clean_name = cat_key.split('_', 1)[-1].replace('_', ' ').upper()
+│   │                   # Extract percentage if present
+│   │                   if '%' in cat_key:
+│   │                       percentage = cat_key.split('_')[0].split()[-1]
+│   │                       clean_name = f"{clean_name} • {percentage}"
 │   │   
-│   │                       # Add the tags for this category
-│   │                       row_pointer = self._populate_grid(tags, row_pointer)
+│   │                   self._create_category_block(clean_name, data[cat_key])
+│   │   
+│   │               self.main_layout.addStretch(1)
+│   │               self.update_ui_state()
 │   │   
 │   │           except Exception as e:
 │   │               print(f"Error loading tags: {e}")
 │   │   
-│   │       def _populate_grid(self, tags, start_row):
-│   │           col = 0
-│   │           row = start_row
-│   │           for tag in tags:
-│   │               cb = QCheckBox(tag)
-│   │               cb.setObjectName("TagTile")
-│   │               cb.setCursor(Qt.CursorShape.PointingHandCursor)
-│   │               cb.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
+│   │       def _create_category_block(self, category_name: str, tags: List[str]):
+│   │           """Create compact category with tags"""
+│   │           cat_widget = QWidget()
+│   │           cat_layout = QVBoxLayout(cat_widget)
+│   │           cat_layout.setContentsMargins(0, 0, 0, 0)
+│   │           cat_layout.setSpacing(8)
 │   │   
-│   │               # Logic: If checking this, uncheck others in same category?
-│   │               # For now, we trust the user, but visually grouping helps.
+│   │           # Category header
+│   │           header = QLabel(category_name)
+│   │           header.setObjectName("CategoryHeader")
+│   │           cat_layout.addWidget(header)
+│   │   
+│   │           # Tag grid - MORE TAGS PER ROW (6 instead of 5)
+│   │           grid = QGridLayout()
+│   │           grid.setContentsMargins(0, 0, 0, 0)
+│   │           grid.setSpacing(6)
+│   │   
+│   │           cols = 6  # 6 tags per row for compact view
+│   │   
+│   │           for i, tag in enumerate(tags):
+│   │               cb = QCheckBox(tag)
+│   │               cb.setCursor(Qt.CursorShape.PointingHandCursor)
+│   │               cb.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
 │   │   
 │   │               if tag.lower() in self.initially_selected:
 │   │                   cb.setChecked(True)
 │   │   
+│   │               cb.stateChanged.connect(self.update_ui_state)
+│   │               cb.category = category_name
+│   │               cb.tag_text = tag.lower()
+│   │   
 │   │               self.checkboxes.append(cb)
-│   │               self.grid_layout.addWidget(cb, row, col)
+│   │               grid.addWidget(cb, i // cols, i % cols)
 │   │   
-│   │               col += 1
-│   │               if col > 3:  # 4 tiles per row
-│   │                   col = 0
-│   │                   row += 1
+│   │           cat_layout.addLayout(grid)
 │   │   
-│   │           # Return the next available row
-│   │           return row + 1 if col == 0 else row + 1
+│   │           self.main_layout.addWidget(cat_widget)
+│   │           self.category_widgets.append((cat_widget, category_name))
 │   │   
-│   │       def filter_tags(self, text):
-│   │           text = text.lower()
+│   │       def filter_tags(self, text: str):
+│   │           """Filter tags"""
+│   │           search = text.lower()
+│   │   
+│   │           if not search:
+│   │               for cb in self.checkboxes:
+│   │                   cb.setVisible(True)
+│   │               for widget, _ in self.category_widgets:
+│   │                   widget.setVisible(True)
+│   │               return
+│   │   
+│   │           # Filter
 │   │           for cb in self.checkboxes:
-│   │               cb.setVisible(text in cb.text().lower())
+│   │               matches = search in cb.tag_text or search in cb.category.lower()
+│   │               cb.setVisible(matches)
 │   │   
-│   │       def get_selected_tags(self):
+│   │           # Hide empty categories
+│   │           for widget, name in self.category_widgets:
+│   │               visible = sum(1 for c in widget.findChildren(QCheckBox) if not c.isHidden())
+│   │               widget.setVisible(visible > 0)
+│   │   
+│   │       def update_ui_state(self):
+│   │           """Update selection display"""
+│   │           selected = [cb.text() for cb in self.checkboxes if cb.isChecked()]
+│   │           count = len(selected)
+│   │   
+│   │           if count > 0:
+│   │               preview = ", ".join(selected[:8])
+│   │               if count > 8:
+│   │                   preview += f" (+{count - 8} more)"
+│   │               self.selection_label.setText(f"Selected ({count}): {preview}")
+│   │               self.apply_btn.setText(f"Apply {count} Tags")
+│   │           else:
+│   │               self.selection_label.setText("No tags selected")
+│   │               self.apply_btn.setText("Apply Selection")
+│   │   
+│   │       def clear_all(self):
+│   │           """Clear all selections"""
+│   │           for cb in self.checkboxes:
+│   │               cb.blockSignals(True)
+│   │               cb.setChecked(False)
+│   │               cb.blockSignals(False)
+│   │           self.update_ui_state()
+│   │   
+│   │       def get_selected_tags(self) -> List[str]:
+│   │           """Return selected tags"""
 │   │           return [cb.text() for cb in self.checkboxes if cb.isChecked()]
 │   │   
-│   └── windows_dll_fix.py  [Mod: 2026-02-12 22:11:02]
+│   │   
+│   │   def main():
+│   │       """Test dialog"""
+│   │       app = QApplication(sys.argv)
+│   │       app.setStyle("Fusion")
+│   │   
+│   │       dialog = TagSelectorDialog("Pop, Electronic, Dark")
+│   │   
+│   │       if dialog.exec():
+│   │           print(f"Selected: {', '.join(dialog.get_selected_tags())}")
+│   │   
+│   │   
+│   │   if __name__ == "__main__":
+│   │       main()
+│   │   
+│   └── windows_dll_fix.py  [Mod: 2026-02-14 04:48:29]
 │       Content:
 │       """
 │       CRITICAL: This module MUST be imported FIRST
@@ -3525,29 +3811,30 @@ AGANCY/
 SECTION 2: DIRECTORY STRUCTURE
 ------------------------------
 AGANCY/
-│   ├── BACKUPS/  [Mod: 2026-02-12 22:36:20]
-│   ├── PRODUCER_STRATEGIES/  [Mod: 2026-02-13 08:11:30]
-│   │   ├── 1_Narrative_Concept.json  [Mod: 2026-02-13 08:09:20]
-│   │   ├── 2_Brand_Identity_Hits.json  [Mod: 2026-02-13 08:09:30]
-│   │   ├── 3_Circadian_Ambient_Flow.json  [Mod: 2026-02-13 08:10:24]
-│   │   └── 4_Mythic_Journey.json  [Mod: 2026-02-13 08:11:30]
-│   ├── agency_styles.py  [Mod: 2026-02-13 08:29:13]
-│   ├── Album_Post_Processor.py  [Mod: 2026-02-12 22:11:02]
-│   ├── Blueprint_Executor.py  [Mod: 2026-02-13 08:32:49]
-│   ├── EnhancedModelScanner.py  [Mod: 2026-02-12 22:11:02]
-│   ├── human_evaluation.py  [Mod: 2026-02-12 22:11:02]
-│   ├── IndividualSongRenderer.py  [Mod: 2026-02-12 22:11:02]
-│   ├── lmstudio_controler.py  [Mod: 2026-02-13 09:14:39]
-│   ├── Orphio_Command_Center2.py  [Mod: 2026-02-12 22:11:02]
-│   ├── Orphio_Command_Center3.py  [Mod: 2026-02-12 22:11:02]
-│   ├── orphio_config.py  [Mod: 2026-02-12 22:11:02]
-│   ├── orphio_engine.py  [Mod: 2026-02-12 22:11:02]
-│   ├── orphio_schema.py  [Mod: 2026-02-12 22:11:02]
-│   ├── OrphioMusicAgencyStudio_______start.py  [Mod: 2026-02-12 22:11:02]
-│   ├── OrphioProductionStudio___________COMPLETE.py  [Mod: 2026-02-13 08:56:57]
-│   ├── RUN_FULL_ALBUM_PIPELINE___________start.py  [Mod: 2026-02-12 22:11:02]
-│   ├── SYSTEM_OVERVIEW.md  [Mod: 2026-02-12 20:28:12]
-│   ├── SystemSetupChecker.py  [Mod: 2026-02-12 22:11:02]
-│   ├── tags.json  [Mod: 2026-02-08 21:11:49]
-│   ├── tagSelector.py  [Mod: 2026-02-12 22:11:02]
-│   └── windows_dll_fix.py  [Mod: 2026-02-12 22:11:02]
+│   ├── DRAFTS/  [Mod: 2026-02-14 05:31:52]
+│   │   └── auto_save_20260214_053152.json  [Mod: 2026-02-14 05:31:52]
+│   ├── PRODUCER_STRATEGIES/  [Mod: 2026-02-14 04:48:40]
+│   │   ├── 1_Narrative_Concept.json  [Mod: 2026-02-14 04:48:29]
+│   │   ├── 2_Brand_Identity_Hits.json  [Mod: 2026-02-14 04:48:29]
+│   │   ├── 3_Circadian_Ambient_Flow.json  [Mod: 2026-02-14 04:48:29]
+│   │   └── 4_Mythic_Journey.json  [Mod: 2026-02-14 04:48:29]
+│   ├── agency_styles.py  [Mod: 2026-02-14 08:54:18]
+│   ├── Album_Post_Processor.py  [Mod: 2026-02-14 04:48:29]
+│   ├── Blueprint_Executor.py  [Mod: 2026-02-14 04:48:29]
+│   ├── EnhancedModelScanner.py  [Mod: 2026-02-14 04:48:29]
+│   ├── human_evaluation.py  [Mod: 2026-02-14 04:48:29]
+│   ├── IndividualSongRenderer.py  [Mod: 2026-02-14 04:48:29]
+│   ├── lmstudio_controler.py  [Mod: 2026-02-14 04:48:29]
+│   ├── Orphio_Command_Center2.py  [Mod: 2026-02-14 04:48:29]
+│   ├── orphio_config.py  [Mod: 2026-02-14 04:48:29]
+│   ├── orphio_engine.py  [Mod: 2026-02-14 04:48:29]
+│   ├── orphio_schema.py  [Mod: 2026-02-14 04:48:29]
+│   ├── OrphioMusicAgencyStudio_______start.py  [Mod: 2026-02-14 04:48:29]
+│   ├── OrphioProductionStudio___________COMPLETE.py  [Mod: 2026-02-14 08:55:27]
+│   ├── OrphioProductionStudio___________COMPLETE2.py  [Mod: 2026-02-14 08:44:09]
+│   ├── RUN_FULL_ALBUM_PIPELINE___________start.py  [Mod: 2026-02-14 04:48:29]
+│   ├── SYSTEM_OVERVIEW.md  [Mod: 2026-02-14 08:46:37]
+│   ├── SystemSetupChecker.py  [Mod: 2026-02-14 04:48:29]
+│   ├── tags.json  [Mod: 2026-02-14 06:38:03]
+│   ├── tagSelector.py  [Mod: 2026-02-14 07:07:12]
+│   └── windows_dll_fix.py  [Mod: 2026-02-14 04:48:29]

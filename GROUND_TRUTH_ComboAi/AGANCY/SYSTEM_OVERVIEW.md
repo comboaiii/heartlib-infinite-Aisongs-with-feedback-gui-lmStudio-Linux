@@ -206,7 +206,7 @@ python SystemSetupChecker.py
 
 ### 3. Launch Application
 ```bash
-python OrphioProductionStudio___________COMPLETE.py
+python OrphioProductionStudio___________COMPLETE2.py
 ```
 
 ### 4. Create First Album

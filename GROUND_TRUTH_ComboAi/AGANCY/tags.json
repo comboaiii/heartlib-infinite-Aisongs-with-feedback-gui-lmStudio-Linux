@@ -1,26 +1,58 @@
 {
     "1_GENRE_95%": [
-        "Pop", "Rock", "Electronic", "Hiphop", "Jazz", "Classical", 
-        "Techno", "Trance", "Ambient", "Folk", "Country", "Metal", "R&B"
+        "Pop", "Rock", "Electronic", "Hip Hop", "Jazz", "Classical",
+        "Techno", "Trance", "Ambient", "Folk", "Country", "Metal", 
+        "R&B", "Soul", "Funk", "Disco", "Reggae", "Blues", "Indie",
+        "Alternative", "Punk", "Grunge", "EDM", "House", "Dubstep",
+        "Trap", "Lo-fi", "Chillwave", "Synthwave", "Vaporwave"
     ],
     "2_TIMBRE_50%": [
-        "Soft", "Warm", "Husky", "Bright", "Dark", "Distorted", "Clean", "Muffled"
+        "Soft", "Warm", "Husky", "Bright", "Dark", "Distorted", 
+        "Clean", "Muffled", "Crisp", "Raspy", "Smooth", "Breathy",
+        "Powerful", "Delicate", "Rich", "Thin", "Full", "Airy"
     ],
     "3_GENDER_37%": [
-        "Male", "Female"
+        "Male Vocals", "Female Vocals", "Mixed Vocals", "Choir",
+        "Spoken Word", "Rap", "Falsetto", "Baritone", "Soprano"
     ],
     "4_MOOD_32%": [
-        "Happy", "Sad", "Energetic", "Joyful", "Melancholic", 
-        "Relaxing", "Dark", "Epic", "Romantic", "Sentimental"
+        "Happy", "Sad", "Energetic", "Joyful", "Melancholic",
+        "Relaxing", "Dark", "Epic", "Romantic", "Sentimental",
+        "Angry", "Peaceful", "Anxious", "Hopeful", "Nostalgic",
+        "Triumphant", "Mysterious", "Playful", "Somber", "Uplifting",
+        "Bittersweet", "Dreamy", "Intense", "Calm", "Aggressive"
     ],
     "5_INSTRUMENT_25%": [
-        "Piano", "Synthesizer", "Acoustic Guitar", "Electric Guitar", 
-        "Bass", "Drums", "Strings", "Violin", "Drum Machine"
+        "Piano", "Synthesizer", "Acoustic Guitar", "Electric Guitar",
+        "Bass", "Drums", "Strings", "Violin", "Drum Machine",
+        "808", "Saxophone", "Trumpet", "Flute", "Organ",
+        "Harmonica", "Banjo", "Ukulele", "Cello", "Harp",
+        "Steel Drums", "Percussion", "Brass", "Woodwinds"
     ],
     "6_SCENE_20%": [
-        "Dance", "Workout", "Dating", "Study", "Cinematic", "Party", "Cafe", "Driving"
+        "Dance", "Workout", "Dating", "Study", "Cinematic", 
+        "Party", "Cafe", "Driving", "Meditation", "Sleep",
+        "Gaming", "Cooking", "Road Trip", "Beach", "Rainy Day",
+        "Sunrise", "Sunset", "Night Out", "Chill Session"
     ],
     "7_TOPIC_10%": [
-        "Love", "Summer", "Heartbreak", "Faith", "Youthful", "Struggle", "Reflection"
+        "Love", "Summer", "Heartbreak", "Faith", "Youthful", 
+        "Struggle", "Reflection", "Freedom", "Loss", "Hope",
+        "Adventure", "Dreams", "Rebellion", "Nature", "City Life",
+        "Memories", "Change", "Identity", "Justice", "Time"
+    ],
+    "8_PRODUCTION_15%": [
+        "Lo-fi", "Hi-fi", "Reverb-heavy", "Dry", "Compressed",
+        "Dynamic", "Minimal", "Layered", "Stripped", "Polished",
+        "Raw", "Atmospheric", "Punchy", "Spacious", "Tight"
+    ],
+    "9_TEMPO_28%": [
+        "Slow", "Mid-tempo", "Up-tempo", "Fast", "Very Fast",
+        "Ballad", "Downtempo", "Moderate", "Accelerating"
+    ],
+    "10_STYLE_18%": [
+        "Retro", "Modern", "Vintage", "Futuristic", "Minimalist",
+        "Maximalist", "Experimental", "Traditional", "Fusion",
+        "Crossover", "Underground", "Mainstream", "Art Pop"
     ]
 }

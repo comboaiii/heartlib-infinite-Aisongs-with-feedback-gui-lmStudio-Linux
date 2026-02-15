@@ -93,7 +93,9 @@ We recommend using `python=3.10` for local deployment.
 Clone this repo and install locally.
 
 ```
-git clone https://github.com/HeartMuLa/heartlib.git
+https://github.com/comboaiii/heartlib-infinite-Aisongs-with-feedback-gui-lmStudio-.git
+
+
 cd heartlib
 pip install -e .
 ```
@@ -108,20 +110,12 @@ hf download --local-dir './ckpt' 'HeartMuLa/HeartMuLaGen'
 hf download --local-dir './ckpt/HeartMuLa-oss-3B' 'HeartMuLa/HeartMuLa-RL-oss-3B-20260123'
 hf download --local-dir './ckpt/HeartCodec-oss' HeartMuLa/HeartCodec-oss-20260123
 
-## To use oss-3B version
-hf download --local-dir './ckpt/HeartMuLa-oss-3B' 'HeartMuLa/HeartMuLa-oss-3B'
-hf download --local-dir './ckpt/HeartCodec-oss' 'HeartMuLa/HeartCodec-oss'
-
-# if you are using modelscope
-modelscope download --model 'HeartMuLa/HeartMuLaGen' --local_dir './ckpt'
 
 ## To use version released on 20260123 (recommended)
 modelscope download --model 'HeartMuLa/HeartMuLa-RL-oss-3B-20260123' --local_dir './ckpt/HeartMuLa-oss-3B'
 modelscope download --model 'HeartMuLa/HeartCodec-oss-20260123' --local_dir './ckpt/HeartCodec-oss'
 
-## To use oss-3B version
-modelscope download --model 'HeartMuLa/HeartMuLa-oss-3B' --local_dir './ckpt/HeartMuLa-oss-3B'
-modelscope download --model 'HeartMuLa/HeartCodec-oss' --local_dir './ckpt/HeartCodec-oss'
+
 ```
 
 After downloading, the `./ckpt` subfolder should structure like this:
